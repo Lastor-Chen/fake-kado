@@ -15,6 +15,16 @@ function App({ Component, pageProps }: AppProps) {
         <title>Fake-Kado</title>
       </Head>
       <Component {...pageProps} />
+
+      <style jsx global>{`
+        #__next {
+          height: 100%;
+        }
+
+        html, body {
+          height: 100%;
+        }
+      `}</style>
     </>
   )
 }
