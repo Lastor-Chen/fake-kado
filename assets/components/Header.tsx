@@ -6,7 +6,7 @@ const Header: NextPage = function () {
   const btnNames = ['light', 'bell', 'member']
 
   return (
-    <header className="d-flex justify-content-between align-items-center px-3">
+    <header className="header-sticky d-flex justify-content-between align-items-center px-3 bg-white">
       <Link href="/">
         <a className="next-img-fix">
           <Image src="/images/kado-logo.svg" width="64" height="64" alt="logo" />
@@ -22,6 +22,11 @@ const Header: NextPage = function () {
       </div>
 
       <style jsx>{`
+        .header-sticky {
+          position: sticky;
+          top: 0;
+        }
+
         .icon {
           width: 1.5rem;
           height: 1.5rem;

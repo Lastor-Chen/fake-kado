@@ -1,22 +1,30 @@
 import type { NextPage } from 'next'
 import Footer from './Footer'
 import Header from './Header'
+import Navbar from './Navbar'
 
 const Layout: NextPage = function ({ children }) {
   return (
     <div className='fix-footer-bottom'>
       <Header />
-      <main className='container h-100'>
+      <Navbar />
+
+      <main className='container fill-height'>
         {children}
       </main>
+
       <Footer />
 
       <style jsx>{`
         .fix-footer-bottom {
           display: flex;
-          height: 100%;
           flex-flow: column;
           justify-content: space-between;
+        }
+
+        .fill-height {
+          min-height: 100%;
+          height: 100vh;
         }
       `}</style>
     </div>
