@@ -17,9 +17,10 @@
     "baseUrl": ".",
     "paths": {
       "@components/*": ["assets/components/*"],
-      "@styles/*": ["assets/styles/*"]
+      "@styles/*": ["assets/styles/*"],
+      "@seeds/*": ["assets/seeds/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "assets/seeds/booksts"],
   "exclude": ["node_modules"]
 }
