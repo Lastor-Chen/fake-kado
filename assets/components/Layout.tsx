@@ -9,7 +9,7 @@ const Layout: NextPage = function ({ children }) {
       <Header />
       <Navbar />
 
-      <main className='container fill-height'>
+      <main className='container fill-height py-4'>
         {children}
       </main>
 
