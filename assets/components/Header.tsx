@@ -30,8 +30,12 @@ const Header: NextPage = function () {
         .icon {
           width: 1.5rem;
           height: 1.5rem;
-          background-color: gray;
+          background-color: var(--theme-ui-colors-gray-9);
           mask: no-repeat center;
+        }
+
+        .btn:disabled {
+          opacity: 0.4;
         }
 
         .bell {

@@ -5,7 +5,7 @@ import Navbar from './Navbar'
 
 const Layout: NextPage = function ({ children }) {
   return (
-    <div className='fix-footer-bottom'>
+    <div className='fix-footer-bottom lock-width'>
       <Header />
       <Navbar />
 
@@ -20,6 +20,10 @@ const Layout: NextPage = function ({ children }) {
           display: flex;
           flex-flow: column;
           justify-content: space-between;
+        }
+
+        .lock-width {
+          min-width: 320px;
         }
 
         .fill-height {

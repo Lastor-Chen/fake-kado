@@ -1,3 +1,7 @@
+:root {
+  --theme-ui-colors-gray-9: #1a202c;
+}
+
 .next-img-fix > span {
   /* 解決 Next Image 父層底部留白的問題 */
   vertical-align: middle;
