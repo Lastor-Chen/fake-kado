@@ -5,13 +5,11 @@ import Navbar from './Navbar'
 
 const Layout: NextPage = function ({ children }) {
   return (
-    <div className='fix-footer-bottom lock-width'>
+    <div className="fix-footer-bottom lock-width">
       <Header />
       <Navbar />
 
-      <main className='container fill-height py-4'>
-        {children}
-      </main>
+      <main className="container override px-3 px-sm-5 py-5">{children}</main>
 
       <Footer />
 
@@ -19,16 +17,16 @@ const Layout: NextPage = function ({ children }) {
         .fix-footer-bottom {
           display: flex;
           flex-flow: column;
-          justify-content: space-between;
+          height: 100%;
         }
 
         .lock-width {
           min-width: 320px;
         }
 
-        .fill-height {
-          min-height: 100%;
-          height: 100vh;
+        .container.override {
+          max-width: 1024px;
+          flex-grow: 1;
         }
       `}</style>
     </div>

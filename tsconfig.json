@@ -16,10 +16,13 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
+      "@assets/*": ["assets/*"],
       "@components/*": ["assets/components/*"],
-      "@styles/*": ["assets/styles/*"]
+      "@styles/*": ["assets/styles/*"],
+      "@seeds/*": ["assets/seeds/*"],
+      "@utils/*": ["assets/utils/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "assets/seeds/booksts"],
   "exclude": ["node_modules"]
 }

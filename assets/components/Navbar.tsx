@@ -13,6 +13,7 @@ const Navbar: NextPage = function () {
         .sticky {
           position: sticky;
           top: 4rem;
+          z-index: 10;
         }
 
         .override-nav {
