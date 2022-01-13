@@ -3,15 +3,10 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import axios from 'axios'
 import ProductCard from '@components/ProductCard'
-import type { Book } from '@seeds/books'
+import type { Response } from './api/products'
 import useSWR from 'swr'
 import { waitTime, handleAxiosError } from '@utils/tool'
 import { When } from 'react-if'
-
-interface ProductsResponse {
-  status: string,
-  result: Book[]
-}
 
 async function fetchBooks(url: string) {
   // 模擬 loading 延遲
@@ -19,7 +14,7 @@ async function fetchBooks(url: string) {
     await waitTime(1500)
   }
 
-  const { data } = await axios.get<ProductsResponse>(url)
+  const { data } = await axios.get<Response>(url)
   if (data.status !== 'ok') throw new Error('Server Error')
   return data
 }
@@ -28,25 +23,25 @@ const Products: NextPage = function () {
   const { data, error } = useSWR('/api/products', fetchBooks)
   if (error) { handleAxiosError(error) }
 
-  const books = data?.result
+  const books = data?.results
 
   return (
-    <Layout>
+    <Layout hasNav>
       <Head>
         <title>Fake-Kado | Books</title>
       </Head>
 
       <When condition={error}>
-        <div className="text-center">Failed to fetch data.</div>
+        <div className="py-5 text-center">Failed to fetch data.</div>
       </When>
 
       <When condition={!books && !error}>
-        <div className="text-center">Loading...</div>
+        <div className="py-5 text-center">Loading...</div>
       </When>
 
       <When condition={books?.length}>
         {() => (
-          <section>
+          <section className="py-5">
             <div className="row row-cols-1 row-cols-sm-2">
               {books?.map((book) => (
                 <ProductCard

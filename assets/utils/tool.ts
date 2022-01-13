@@ -8,8 +8,8 @@ export function waitTime(ms: number) {
 
 export function handleAxiosError(err: any) {
   if (axios.isAxiosError(err)) {
-      console.log('Bad Request:', err.response?.statusText);
+    console.log('Bad Request:', err.response?.statusText);
   } else {
-      console.log('Unexpected', err);
+    console.log('Unexpected', err);
   }
 }

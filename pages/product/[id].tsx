@@ -1,34 +1,40 @@
 import Layout from '@components/Layout'
-import type { GetServerSideProps } from 'next'
+import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
 import type { PropsWithChildren } from 'react'
-import type { ParsedUrlQuery } from 'querystring'
 import Head from 'next/head'
 import Link from 'next/link'
+import { books } from '@seeds/books'
+import type { Book } from '@seeds/books'
+import type { QueryParam } from '../api/product/[id]'
 
 interface ProductProps {
-  id: string,
+  product: Book
 }
 
-export default function Product({ id }: PropsWithChildren<ProductProps>) {
+export default function Product({ product: book }: PropsWithChildren<ProductProps>) {
   return (
     <Layout>
       <Head>
-        <title>{id}</title>
+        <title>{book.name}</title>
       </Head>
-      <h1>Product {id}</h1>
+      <h1>Product {book.id}</h1>
 
       <Link href="/products">
         <a>back</a>
       </Link>
-
     </Layout>
   )
 }
 
-interface ServerSideProps extends ProductProps, ParsedUrlQuery {}
+export const getServerSideProps = async function (
+  context: GetServerSidePropsContext<QueryParam>
+): Promise<GetServerSidePropsResult<ProductProps>> {
+  const productId = context.params?.id
+  const book = books.find((book) => book.id === Number(productId))
 
-export const getServerSideProps: GetServerSideProps<{}, ServerSideProps> = async function (context) {
+  if (!book) return { notFound: true }
+
   return {
-    props: { id: context.params?.id },
+    props: { product: book },
   }
 }
