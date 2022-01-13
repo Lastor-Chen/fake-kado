@@ -16,9 +16,11 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
+      "@assets/*": ["assets/*"],
       "@components/*": ["assets/components/*"],
       "@styles/*": ["assets/styles/*"],
-      "@seeds/*": ["assets/seeds/*"]
+      "@seeds/*": ["assets/seeds/*"],
+      "@utils/*": ["assets/utils/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "assets/seeds/booksts"],
