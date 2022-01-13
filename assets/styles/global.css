@@ -1,5 +1,14 @@
 :root {
   --theme-ui-colors-gray-9: #1a202c;
+  --theme-ui-colors-gray-8: #2d3748;
+}
+
+html, body {
+  height: 100%;
+}
+
+#__next {
+  height: 100%;
 }
 
 .next-img-fix > span {

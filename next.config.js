@@ -9,5 +9,8 @@ module.exports = {
         permanent: true,
       }
     ]
+  },
+  images: {
+    domains: ['www.kadokado.com.tw']
   }
 }

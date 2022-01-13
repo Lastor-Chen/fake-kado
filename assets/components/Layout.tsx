@@ -9,7 +9,7 @@ const Layout: NextPage = function ({ children }) {
       <Header />
       <Navbar />
 
-      <main className="container override px-2 py-5">{children}</main>
+      <main className="container override px-3 px-sm-5 py-5">{children}</main>
 
       <Footer />
 
@@ -25,7 +25,7 @@ const Layout: NextPage = function ({ children }) {
         }
 
         .container.override {
-          max-width: 1000px;
+          max-width: 1024px;
           flex-grow: 1;
         }
       `}</style>

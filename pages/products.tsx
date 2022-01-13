@@ -1,7 +1,6 @@
 import Layout from '@components/Layout'
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import Link from 'next/link'
 import axios from 'axios'
 import ProductCard from '@components/ProductCard'
 import type { Book } from '@seeds/books'
@@ -48,34 +47,18 @@ const Products: NextPage = function () {
       <When condition={books?.length}>
         {() => (
           <section>
-            <div className="row">
+            <div className="row row-cols-1 row-cols-sm-2">
               {books?.map((book) => (
-                <article className="col-6 d-flex" key={book.id}>
-                  <div className="w-50">
-                    <Link href={`/product/${book.id}`}>
-                      <a className="d-inline-block">
-                        <img src={book.image} className="w-100" alt="" />
-                      </a>
-                    </Link>
-                  </div>
-                  <div className="w-50 px-3">
-                    <Link href={`/product/${book.id}`}>
-                      <a className="h4 text-reset text-decoration-none">{book.name}</a>
-                    </Link>
-                    <div>{book.author}</div>
-                  </div>
-                </article>
+                <ProductCard
+                  key={book.id}
+                  product={book}
+                  wrapperClass="col mb-4"
+                />
               ))}
             </div>
           </section>
         )}
       </When>
-
-      <style jsx>{`
-        .test {
-          color: red;
-        }
-      `}</style>
     </Layout>
   )
 }
