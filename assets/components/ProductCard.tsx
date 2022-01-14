@@ -13,7 +13,7 @@ const ProductCard: FC<ProductCardProps> = function ({ wrapperClass, product }) {
     <article className={`${wrapperClass} d-flex row-cols-2`}>
       <div className="col text-center">
         <Link href={`/product/${product.id}`}>
-          <a className="d-inline-block next-img-fix">
+          <a className="d-inline-block next-img-fix bevel">
             <Image src={product.image} width="190" height="271" alt={product.name} />
           </a>
         </Link>
@@ -32,6 +32,11 @@ const ProductCard: FC<ProductCardProps> = function ({ wrapperClass, product }) {
       <style jsx>{`
         .color {
           color: var(--theme-ui-colors-gray-8);
+        }
+
+        .bevel {
+          border-radius: 0.25rem;
+          overflow: hidden;
         }
       `}</style>
     </article>

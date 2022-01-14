@@ -17,7 +17,7 @@ const Layout: NextPage<LayoutProps> = function ({ children, hasNav }) {
         <Navbar />
       </When>
 
-      <main className="container override px-3 px-sm-5">{children}</main>
+      <main className="">{children}</main>
 
       <Footer />
 
@@ -32,8 +32,7 @@ const Layout: NextPage<LayoutProps> = function ({ children, hasNav }) {
           min-width: 320px;
         }
 
-        .container.override {
-          max-width: 1024px;
+        main {
           flex-grow: 1;
         }
       `}</style>

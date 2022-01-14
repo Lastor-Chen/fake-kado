@@ -31,29 +31,37 @@ const Products: NextPage = function () {
         <title>Fake-Kado | Books</title>
       </Head>
 
-      <When condition={error}>
-        <div className="py-5 text-center">Failed to fetch data.</div>
-      </When>
+      <div className="container override px-3 px-sm-5">
+        <When condition={error}>
+          <div className="py-5 text-center">Failed to fetch data.</div>
+        </When>
 
-      <When condition={!books && !error}>
-        <div className="py-5 text-center">Loading...</div>
-      </When>
+        <When condition={!books && !error}>
+          <div className="py-5 text-center">Loading...</div>
+        </When>
 
-      <When condition={books?.length}>
-        {() => (
-          <section className="py-5">
-            <div className="row row-cols-1 row-cols-sm-2">
-              {books?.map((book) => (
-                <ProductCard
-                  key={book.id}
-                  product={book}
-                  wrapperClass="col mb-4"
-                />
-              ))}
-            </div>
-          </section>
-        )}
-      </When>
+        <When condition={books?.length}>
+          {() => (
+            <section className="py-5">
+              <div className="row row-cols-1 row-cols-sm-2">
+                {books?.map((book) => (
+                  <ProductCard
+                    key={book.id}
+                    product={book}
+                    wrapperClass="col mb-4"
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+        </When>
+      </div>
+
+      <style jsx>{`
+        .container.override {
+          max-width: 1024px;
+        }
+      `}</style>
     </Layout>
   )
 }
