@@ -14,6 +14,18 @@ interface ProductProps {
 }
 
 export default function Product({ product: book }: PropsWithChildren<ProductProps>) {
+  book.desc = `社團名：
+「讓校園生活更加充實、脫離頹喪的善男信女協會社」，簡稱「喪女會」。 目的：
+歌頌青春！ 成員：
+1. 千種學姊，我親愛的青春☆傻大姊。
+2. 繭，化學實驗狂，獨占學姊的寵愛，我好嫉妒。
+3. 有理，我的表妹暨義妹，暴力女。
+4. 雛子，掛名社員，重度百合。
+5. 我，花輪迴，拜託別再把我當女生了。 我們「喪女會」即使不受歡迎毫無章法，但是還算穩定。
+直到遇見那名少女，我才知道我們其實一直過著「不當」的日常──`
+
+  book.categories = ['戀愛言情', '歡樂搞笑', '測試', '測試', '測試']
+
   return (
     <Layout>
       <Head>
@@ -42,12 +54,13 @@ export default function Product({ product: book }: PropsWithChildren<ProductProp
             </div>
             <div className="my-1">
               <span className="me-2">繪師</span>
-              <span>{book.author}</span>
+              <span>{book.illustrator}</span>
             </div>
             <div className="mt-3 mt-sm-auto">
               <div className="d-flex flex-wrap gap-2">
-                <span className="tag-icon">戀愛言情</span>
-                <span className="tag-icon">歡樂搞笑</span>
+                {book.categories.map((name, idx) => (
+                  <span className="icon-outline-light" key={`tc${idx}`}>{name}</span>
+                ))}
               </div>
             </div>
             <div className="mt-3 text-center text-sm-start">
@@ -62,11 +75,29 @@ export default function Product({ product: book }: PropsWithChildren<ProductProp
         <NavBarItem text="資訊" isActive />
       </Navbar>
 
-      <section className="container override px-3 px-sm-5">
-        <Link href="/products">
-          <a>back</a>
-        </Link>
-      </section>
+      <article className="container override py-4 px-3 px-sm-5 mb-5">
+        <section className="mb-4">
+          <h6 className="fw-bold mb-5">{book.name}</h6>
+          <pre className="desc small mb-0">{book.desc}</pre>
+        </section>
+        <section className="mb-4">
+          <h6 className="fw-bold mb-4">作者</h6>
+          <div className="d-flex align-items-center">
+            <div className="me-3">
+              <Image src="/images/author-icon.svg" width="80" height="80" alt="" />
+            </div>
+            <span>{book.author}</span>
+          </div>
+        </section>
+        <section>
+          <h6 className="fw-bold mb-4">分類</h6>
+          <div className="d-flex flex-wrap gap-2 small">
+            {book.categories.map((name, idx) => (
+              <span className="icon-primary" key={`bc${idx}`}>{name}</span>
+            ))}
+          </div>
+        </section>
+      </article>
 
       <style jsx>{`
         .bg-box {
@@ -106,12 +137,6 @@ export default function Product({ product: book }: PropsWithChildren<ProductProp
           z-index: 1;
           display: flex;
           flex-flow: column;
-
-          & .tag-icon {
-            padding: 0.25rem 0.5rem;
-            background-color: rgba(255, 255, 255, 0.2);
-            border-radius: 50rem;
-          }
         }
 
         .my-btn {
@@ -129,6 +154,27 @@ export default function Product({ product: book }: PropsWithChildren<ProductProp
 
         .container.override {
           max-width: 1024px;
+
+          .desc {
+            color: var(--theme-ui-colors-gray-7);
+            line-height: 2;
+            letter-spacing: 0.05em;
+            white-space: pre-wrap;
+          }
+        }
+
+        .icon-outline-light {
+          color: white;
+          padding: 0.25rem 0.5rem;
+          background-color: rgba(255, 255, 255, 0.2);
+          border-radius: 50rem;
+        }
+
+        .icon-primary {
+          color: white;
+          padding: 0.75rem 1rem;
+          background-color: var(--theme-ui-colors-primary);
+          border-radius: 50rem;
         }
       `}</style>
     </Layout>
