@@ -1,22 +1,54 @@
 // 商品假資料
+// 圖片假資料: https://picsum.photos
+// 文字假資料: https://github.com/boo1ean/casual
+
+import casual from 'casual'
 
 export interface Book {
   id: number
   name: string
   author: string
+  illustrator: string
   image: string
-  illustrator?: string
-  desc?: string
-  categories?: string[]
+  desc: string
+  categories: string[]
 }
 
-export const books = [...Array(10)].map((_, idx): Book => {
+const count = 50 // 商品總數
+const imgSize = '1000/1426' // {長}/{寬}
+const categories = ['戀愛言情', '異世界奇幻', '歡樂搞笑']
+
+export const books = [...Array(count)].map((_, idx): Book => {
   return {
     id: idx,
-    name: '書名',
-    author: '作者名',
-    illustrator: '繪師名',
-    image:
-      'https://www.kadokado.com.tw/_next/image?url=https%3A%2F%2Fstorage.kadokado.com.tw%2FownerId%252F45%252Fcover%252F8c6168ea3a73ede1a242d2de89d9eee3%252Fblob&w=1920&q=75',
+    name: casual.title,
+    author: casual.name,
+    illustrator: casual.name,
+    image: `https://picsum.photos/seed/book${idx}/${imgSize}`,
+    desc: genDesc(),
+    categories: genRandomCategories(),
   }
 })
+
+// Tool Function
+// ================
+
+// 隨機生成分類, 不重覆
+function genRandomCategories() {
+  const count = randomNum(categories.length)
+  const clone = [...categories]
+  clone.sort(() => Math.random() - 0.5)
+  return Array.from(Array(count), () => {
+    return clone.splice(0, 1)[0]
+  })
+}
+
+/** 隨機生成 Book 資訊描述 */
+function genDesc() {
+  return Array.from(Array(3), () => casual.sentences(randomNum(10))).join('\n')
+}
+
+/** 隨機生成整數 1 ~ max */
+function randomNum(max: any) {
+  return Math.floor(Math.random() * max) + 1
+}

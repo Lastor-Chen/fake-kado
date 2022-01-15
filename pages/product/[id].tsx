@@ -14,18 +14,6 @@ interface ProductProps {
 }
 
 export default function Product({ product: book }: PropsWithChildren<ProductProps>) {
-  book.desc = `社團名：
-「讓校園生活更加充實、脫離頹喪的善男信女協會社」，簡稱「喪女會」。 目的：
-歌頌青春！ 成員：
-1. 千種學姊，我親愛的青春☆傻大姊。
-2. 繭，化學實驗狂，獨占學姊的寵愛，我好嫉妒。
-3. 有理，我的表妹暨義妹，暴力女。
-4. 雛子，掛名社員，重度百合。
-5. 我，花輪迴，拜託別再把我當女生了。 我們「喪女會」即使不受歡迎毫無章法，但是還算穩定。
-直到遇見那名少女，我才知道我們其實一直過著「不當」的日常──`
-
-  book.categories = ['戀愛言情', '歡樂搞笑', '測試', '測試', '測試']
-
   return (
     <Layout>
       <Head>

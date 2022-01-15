@@ -7,7 +7,7 @@ const Header: NextPage = function () {
 
   return (
     <header className="sticky d-flex justify-content-between align-items-center px-3 bg-white">
-      <Link href="/">
+      <Link href="/products">
         <a className="next-img-fix">
           <Image src="/images/kado-logo.svg" width="64" height="64" alt="logo" />
         </a>
