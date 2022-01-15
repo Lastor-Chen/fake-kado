@@ -10,7 +10,7 @@ interface ProductCardProps {
 
 const ProductCard: FC<ProductCardProps> = function ({ wrapperClass, product }) {
   return (
-    <article className={`${wrapperClass} d-flex row-cols-2`}>
+    <div className={`${wrapperClass} d-flex row-cols-2`}>
       <div className="col text-center">
         <Link href={`/product/${product.id}`}>
           <a className="d-inline-block next-img-fix bevel">
@@ -18,7 +18,7 @@ const ProductCard: FC<ProductCardProps> = function ({ wrapperClass, product }) {
           </a>
         </Link>
       </div>
-      <div className="col ps-3 small color">
+      <div className="col ps-md-3 small color">
         <Link href={`/product/${product.id}`}>
           <a className="fs-6 fw-bold text-reset text-decoration-none">{product.name}</a>
         </Link>
@@ -39,7 +39,7 @@ const ProductCard: FC<ProductCardProps> = function ({ wrapperClass, product }) {
           overflow: hidden;
         }
       `}</style>
-    </article>
+    </div>
   )
 }
 

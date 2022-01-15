@@ -48,7 +48,7 @@ const Products: NextPage = function () {
         <When condition={books?.length}>
           {() => (
             <section className="py-5">
-              <div className="row row-cols-1 row-cols-sm-2">
+              <div className="row row-cols-1 row-cols-md-2">
                 {books?.map((book) => (
                   <ProductCard
                     key={book.id} //
