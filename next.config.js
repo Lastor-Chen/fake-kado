@@ -7,10 +7,10 @@ module.exports = {
         source: '/',
         destination: '/products',
         permanent: true,
-      }
+      },
     ]
   },
   images: {
-    domains: ['www.kadokado.com.tw']
-  }
+    domains: ['picsum.photos', 'i.imgur.com'],
+  },
 }
