@@ -23,7 +23,7 @@ const Layout: NextPage<LayoutProps> = function ({ children, hasNav }) {
         )}
       </When>
 
-      <main className="">{children}</main>
+      <main>{children}</main>
 
       <Footer />
 

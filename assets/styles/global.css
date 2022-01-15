@@ -1,8 +1,11 @@
 :root {
-  --theme-ui-colors-gray-9: #1a202c;
-  --theme-ui-colors-gray-8: #2d3748;
+  --theme-ui-colors-gray-6: #718096;
   --theme-ui-colors-gray-7: #4a5568;
+  --theme-ui-colors-gray-8: #2d3748;
+  --theme-ui-colors-gray-9: #1a202c;
   --theme-ui-colors-primary: #ff8674;
+  --theme-ui-colors-harvestGold: #d7af70;
+  --theme-ui-colors-pelorus: #35bcbc;
 }
 
 html, body {

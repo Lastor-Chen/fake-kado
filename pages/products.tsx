@@ -7,6 +7,7 @@ import type { Response } from './api/products'
 import useSWR from 'swr'
 import { waitTime, handleAxiosError } from '@utils/tool'
 import { When } from 'react-if'
+import CategoryBar from '@components/CategoryBar'
 
 async function fetchBooks(url: string) {
   // 模擬 loading 延遲
@@ -21,7 +22,9 @@ async function fetchBooks(url: string) {
 
 const Products: NextPage = function () {
   const { data, error } = useSWR('/api/products', fetchBooks)
-  if (error) { handleAxiosError(error) }
+  if (error) {
+    handleAxiosError(error)
+  }
 
   const books = data?.results
 
@@ -31,7 +34,9 @@ const Products: NextPage = function () {
         <title>Fake-Kado | Books</title>
       </Head>
 
-      <div className="container override px-3 px-sm-5">
+      <div className="container override px-3 px-sm-5 pt-4">
+        <CategoryBar />
+
         <When condition={error}>
           <div className="py-5 text-center">Failed to fetch data.</div>
         </When>
@@ -46,7 +51,7 @@ const Products: NextPage = function () {
               <div className="row row-cols-1 row-cols-sm-2">
                 {books?.map((book) => (
                   <ProductCard
-                    key={book.id}
+                    key={book.id} //
                     product={book}
                     wrapperClass="col mb-4"
                   />
