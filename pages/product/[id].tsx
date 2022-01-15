@@ -52,7 +52,7 @@ export default function Product({ product: book }: PropsWithChildren<ProductProp
               </div>
             </div>
             <div className="mt-3 text-center text-sm-start">
-              <button className="w-75 my-btn btn-alpha">開始閱讀</button>
+              <button className="my-btn btn-alpha">開始閱讀</button>
             </div>
           </div>
         </div>
@@ -129,8 +129,10 @@ export default function Product({ product: book }: PropsWithChildren<ProductProp
 
         .my-btn {
           display: inline-block;
+          width: 75%;
+          max-width: 256px;
           border-radius: 50rem;
-          cursor: pointer;
+          cursor: auto;
 
           &.btn-alpha {
             color: white;

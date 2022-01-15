@@ -12,5 +12,8 @@ export default function controller(req: NextApiRequest, res: NextApiResponse<Res
     return res.status(404).json({ status: 'error', results: [] })
   }
 
+  // sort by DESC
+  books.sort((a, b) => b.id - a.id)
+
   res.status(200).json({ status: 'ok', results: books })
 }

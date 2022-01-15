@@ -20,7 +20,7 @@ const ProductCard: FC<ProductCardProps> = function ({ wrapperClass, product }) {
       </div>
       <div className="col ps-3 small color">
         <Link href={`/product/${product.id}`}>
-          <a className="fw-bold text-reset text-decoration-none">{product.name}</a>
+          <a className="fs-6 fw-bold text-reset text-decoration-none">{product.name}</a>
         </Link>
         <div className="mt-2">{product.author}</div>
         <div className="my-3 next-img-fix">
