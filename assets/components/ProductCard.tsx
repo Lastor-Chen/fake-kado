@@ -1,4 +1,4 @@
-import type { FC } from 'React'
+import type { FC } from 'react'
 import type { Book } from '@seeds/books'
 import Link from 'next/link'
 import Image from 'next/image'

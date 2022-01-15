@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { books } from '@seeds/books'
 import type { Book } from '@seeds/books'
 import type { QueryParam } from '../api/product/[id]'
+import Navbar, { NavBarItem } from '@components/Navbar'
 
 interface ProductProps {
   product: Book
@@ -55,6 +56,11 @@ export default function Product({ product: book }: PropsWithChildren<ProductProp
           </div>
         </div>
       </section>
+
+      <Navbar>
+        <NavBarItem text="目錄" isDisabled />
+        <NavBarItem text="資訊" isActive />
+      </Navbar>
 
       <section className="container override px-3 px-sm-5">
         <Link href="/products">
@@ -120,7 +126,6 @@ export default function Product({ product: book }: PropsWithChildren<ProductProp
             padding: 0.75rem 0;
           }
         }
-
 
         .container.override {
           max-width: 1024px;
