@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { books } from '@seeds/books'
+import books from '@seeds/books.json'
 import type { Book } from '@seeds/books'
 import type { APIResponse } from '@utils/api/types'
 

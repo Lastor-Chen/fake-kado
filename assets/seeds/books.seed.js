@@ -1,39 +1,54 @@
-// 商品假資料
+// ====================================================
+// 商品假資料生成器
+//
+// 需先生成靜態商品假資料後, 再啟動 Next.js App
+// Run "yarn seed"
+//
 // 圖片假資料: https://picsum.photos
 // 文字假資料: https://github.com/boo1ean/casual
+// ====================================================
 
-import casual from 'casual'
-const casualJP = (<any>casual).ja_JP as typeof casual
+// @ts-check
 
-export interface Book {
-  id: number
-  name: string
-  author: string
-  illustrator: string
-  image: string
-  desc: string
-  categories: string[]
-}
+const fs = require('fs')
+const path = require('path')
+const casual = require('casual')
+
+/** @type {typeof casual} */
+const casualJP = casual['ja_JP']
 
 const count = 50 // 商品總數
 const imgSize = '1000/1426' // {長}/{寬}
 const categories = ['戀愛言情', '異世界奇幻', '歡樂搞笑', '都市現代', '犯罪推理懸疑']
 
-// 隨機假資料
-const fakeBooks = [...Array(count)].map((_, idx): Book => {
-  return {
-    id: idx,
-    name: casual.title,
-    author: casualJP.username,
-    illustrator: casualJP.username,
-    image: `https://picsum.photos/seed/book${idx}/${imgSize}`,
-    desc: genDesc(3),
-    categories: genRandomCategories(),
-  }
-})
+/**
+ * @typedef {import('./books').Book} Book
+ */
 
-// 特規資料
-const customization: Book[] = [
+/**
+ * 隨機假資料
+ * @type {Book[]}
+ */
+const fakeBooks = [...Array(count)].map(
+  /** @returns {Book} */
+  (_, idx) => {
+    return {
+      id: idx,
+      name: casual.title,
+      author: casualJP.username,
+      illustrator: casualJP.username,
+      image: `https://picsum.photos/seed/book${idx}/${imgSize}`,
+      desc: genDesc(3),
+      categories: genRandomCategories(),
+    }
+  }
+)
+
+/**
+ * 特規資料
+ * @type {Book[]}
+ */
+const customization = [
   {
     id: count + 1,
     name: 'TIGER×DRAGON！',
@@ -63,7 +78,20 @@ const customization: Book[] = [
   },
 ]
 
-export const books = fakeBooks.concat(customization)
+// 組合隨機資料與特規資料
+const books = fakeBooks.concat(customization)
+
+// 生成 JSON file
+const json = JSON.stringify(books)
+const filePath = '/assets/seeds/books.json'
+const fullPath = path.join(process.cwd(), filePath)
+
+fs.writeFile(fullPath, json, 'utf8', () => {
+  console.log('[Seed] Generate books seed data successfully')
+  console.log(`[Seed] Please check ${filePath}`)
+  process.exit()
+})
+
 
 // Tool Function
 // ================
@@ -78,12 +106,18 @@ function genRandomCategories() {
   })
 }
 
-/** 隨機生成 Book desc 資訊描述 */
-function genDesc(sentenceCount: number) {
+/**
+ * 隨機生成 Book desc 資訊描述
+ * @param {number} sentenceCount
+ */
+function genDesc(sentenceCount) {
   return [...Array(sentenceCount)].map(() => casual.sentences(randomNum(10))).join('\n')
 }
 
-/** 隨機生成整數 1 ~ max */
-function randomNum(max: any) {
+/**
+ * 隨機生成整數 1 ~ max
+ * @param {number} max
+ */
+function randomNum(max) {
   return Math.floor(Math.random() * max) + 1
 }
