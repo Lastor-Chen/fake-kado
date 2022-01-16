@@ -3,17 +3,17 @@ import SearchBar from '@assets/components/SearchBar'
 import { handleAxiosError } from '@assets/utils/tool'
 import axios from 'axios'
 import type { NextPage, GetServerSidePropsResult, GetServerSidePropsContext } from 'next'
-import type { ProductsResponse } from '../pages/api/products'
+import type { ProductsResponse, ProductsQueryString } from '../pages/api/products'
 import type { Book } from '@assets/seeds/books'
 import Head from 'next/head'
 import ProductCard from '@assets/components/ProductCard'
 
 /** 接收的 Query String 定義 */
 interface OverrideContext extends GetServerSidePropsContext {
-  query: { q?: string }
+  query: ProductsQueryString
 }
 
-/** 回傳結果定義 */
+/** GetServerSideProps 回傳結果定義 */
 type SearchResult = {
   keyword: string
   books: Book[]
@@ -24,12 +24,11 @@ export async function getServerSideProps(context: OverrideContext): Promise<GetS
   const searchKeyWord = context.query.q || ''
 
   // 模擬 API Server 分離, 打 API 的情況
-  const baseURL = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://fake-kado.vercel.app'
+  const host = context.req.headers.host
+  const baseURL = process.env.NODE_ENV === 'development' ? `http://${host}` : `https://${host}`
   try {
-    const { data } = await axios.get<ProductsResponse>(`/api/products`, {
-      baseURL,
-      params: { q: searchKeyWord },
-    })
+    const params: ProductsQueryString = { q: searchKeyWord, order: 'DESC' }
+    const { data } = await axios.get<ProductsResponse>(`/api/products`, { baseURL, params })
 
     return {
       props: { books: data.results, keyword: searchKeyWord },

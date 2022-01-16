@@ -21,8 +21,9 @@ async function fetchBooks(url: string) {
   return data
 }
 
-const Products: NextPage = function (props) {
-  const { data, error } = useSWR('/api/products', fetchBooks)
+// SSG without data + CSR Page
+const Products: NextPage = function () {
+  const { data, error } = useSWR('/api/products?order=DESC', fetchBooks)
   if (error) {
     handleAxiosError(error)
   }

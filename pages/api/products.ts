@@ -7,16 +7,26 @@ export interface ProductsResponse extends APIResponse {
   results: Book[]
 }
 
-interface OverrideRequest extends NextApiRequest {
-  query: { q: string }
+/** Request query string 定義 */
+export type ProductsQueryString = {
+  q?: string
+  order?: 'ASC' | 'DESC'
+}
+interface ProductsRequest extends NextApiRequest {
+  query: ProductsQueryString
 }
 
-export default function controller(req: OverrideRequest, res: NextApiResponse<ProductsResponse>) {
+export default function controller(req: ProductsRequest, res: NextApiResponse<ProductsResponse>) {
   if (req.method !== 'GET') {
     return res.status(404).json({ status: 'error', results: [] })
   }
 
   // Search 請求
+  let order = req.query.order
+  if (order !== 'ASC' && order !== 'DESC') {
+    order = 'DESC'
+  }
+
   const keyword = req.query.q || ''
   const results = books.filter(
     (book) =>
