@@ -19,7 +19,6 @@ type SearchResult = {
   books: Book[]
 }
 
-// 純 SSR Page
 export async function getServerSideProps(context: OverrideContext): Promise<GetServerSidePropsResult<SearchResult>> {
   const searchKeyWord = context.query.q || ''
 
@@ -41,6 +40,7 @@ export async function getServerSideProps(context: OverrideContext): Promise<GetS
   }
 }
 
+// SSR Page
 const Search: NextPage<SearchResult> = function (props) {
   const books = props.books
 

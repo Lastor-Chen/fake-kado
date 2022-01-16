@@ -3,23 +3,29 @@ import books from '@seeds/books.json'
 import type { Book } from '@seeds/books'
 import type { APIResponse } from '@utils/api/types'
 
-export type QueryParam = {
+/** Request 動態路由 params 定義 */
+export type ProductQueryParams = {
   id?: string
 }
+interface ProductRequest extends NextApiRequest {
+  query: ProductQueryParams
+}
 
-export interface Response extends APIResponse {
+/** 定義此 API 回傳值 */
+export interface ProductResponse extends APIResponse {
   results: Book | null
 }
 
-export default function controller(req: NextApiRequest, res: NextApiResponse<Response>) {
-  console.log(`${req.method} /api/product/[id]`)
-
+export default function controller(req: ProductRequest, res: NextApiResponse<ProductResponse>) {
   if (req.method !== 'GET') {
     return res.status(404).json({ status: 'error', results: null })
   }
 
-  const query: QueryParam = req.query
-  const productId = query.id
+  const productId = req.query.id
   const book = books.find((book) => book.id === Number(productId))
+  if (!book) {
+    res.status(404).json({ status: 'error', results: null })
+  }
+
   res.status(200).json({ status: 'ok', results: book || null })
 }

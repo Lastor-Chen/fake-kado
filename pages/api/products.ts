@@ -3,10 +3,6 @@ import books from '@seeds/books.json'
 import type { Book } from '@seeds/books'
 import type { APIResponse } from '@utils/api/types'
 
-export interface ProductsResponse extends APIResponse {
-  results: Book[]
-}
-
 /** Request query string 定義 */
 export type ProductsQueryString = {
   q?: string
@@ -14,6 +10,11 @@ export type ProductsQueryString = {
 }
 interface ProductsRequest extends NextApiRequest {
   query: ProductsQueryString
+}
+
+/** 定義此 API 回傳值 */
+export interface ProductsResponse extends APIResponse {
+  results: Book[]
 }
 
 export default function controller(req: ProductsRequest, res: NextApiResponse<ProductsResponse>) {
@@ -27,13 +28,16 @@ export default function controller(req: ProductsRequest, res: NextApiResponse<Pr
     order = 'DESC'
   }
 
-  const keyword = req.query.q || ''
-  const results = books.filter(
-    (book) =>
-      book.name.includes(keyword) ||
-      book.categories.some((cateName) => cateName.includes(keyword)) ||
-      book.author.includes(keyword)
-  )
+  let results = books
+  if (req.query.q) {
+    const keyword = req.query.q || ''
+    results = books.filter(
+      (book) =>
+        book.name.includes(keyword) ||
+        book.categories.some((cateName) => cateName.includes(keyword)) ||
+        book.author.includes(keyword)
+    )
+  }
 
   // Sort by DESC
   results.sort((a, b) => b.id - a.id)
