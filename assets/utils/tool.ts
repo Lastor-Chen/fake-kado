@@ -13,3 +13,9 @@ export function handleAxiosError(err: any) {
     console.log('Unexpected', err);
   }
 }
+
+/** 取得 fetch 時的 hostname */
+export function getAPIBaseURL() {
+  // 僅部署後會設置 HOST 環境變數
+  return process.env.HOST ? `https://${process.env.HOST}` : `http://localhost:3000`
+}

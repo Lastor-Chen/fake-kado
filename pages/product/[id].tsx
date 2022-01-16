@@ -8,8 +8,7 @@ import axios from 'axios'
 import type { ProductsQueryString, ProductsResponse } from 'pages/api/products'
 import type { ProductResponse } from 'pages/api/product/[id]'
 import { useRouter } from 'next/router'
-import { waitTime } from '@assets/utils/tool'
-import { When } from 'react-if'
+import { waitTime, getAPIBaseURL } from '@assets/utils/tool'
 import Spinner from '@components/Spinner'
 
 /** 定義動態路由的 key name */
@@ -19,10 +18,7 @@ type StaticPathParam = {
 type StaticPath = GetStaticPathsResult<StaticPathParam>['paths'][0]
 
 // 模擬 API Server 分離, 打 API 的情況
-const baseURL =
-  process.env.NODE_ENV === 'development'
-    ? `http://localhost:3000/` //
-    : `https://https://fake-kado.vercel.app`
+const baseURL = getAPIBaseURL()
 
 export const getStaticPaths: GetStaticPaths<StaticPathParam> = async function () {
   const params: ProductsQueryString = { order: 'DESC' }
