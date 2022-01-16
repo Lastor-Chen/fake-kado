@@ -4,10 +4,12 @@ import { useState } from 'react'
 
 type SearchBarProps = {
   wrapperClass?: string
+  keyword?: string
 }
 
 export default function SearchBar (props: PropsWithChildren<SearchBarProps>) {
-  const [search, setSearch] = useState('')
+  const currentKeyword = props.keyword || ''
+  const [search, setSearch] = useState(currentKeyword)
   const router = useRouter()
 
   const onSearch = (e: FormEvent) => {

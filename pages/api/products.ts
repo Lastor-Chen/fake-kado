@@ -17,12 +17,12 @@ export default function controller(req: OverrideRequest, res: NextApiResponse<Pr
   }
 
   // Search 請求
-  const keyWord = req.query.q || ''
+  const keyword = req.query.q || ''
   const results = books.filter(
     (book) =>
-      book.name.includes(keyWord) ||
-      book.categories.some((cateName) => cateName.includes(keyWord)) ||
-      book.author.includes(keyWord)
+      book.name.includes(keyword) ||
+      book.categories.some((cateName) => cateName.includes(keyword)) ||
+      book.author.includes(keyword)
   )
 
   // Sort by DESC

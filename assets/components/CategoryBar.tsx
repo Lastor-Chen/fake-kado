@@ -17,8 +17,9 @@ export default function CategoryBar(props: PropsWithChildren<CategoryBarProps>) 
   return (
     <section className={`cate-bar row row-cols-2 row-cols-sm-4 ${props.wrapperClass}`}>
       {categoryData.map((cate, idx) => {
+        const keyword = cate.name === '全部作品' ? '' : cate.name
         return (
-          <Link href="/products" passHref key={idx}>
+          <Link href={`/search?q=${keyword}`} passHref key={idx}>
             <div className="col">
               <div className="link-box px-3">
                 <div className="next-img-fix">
