@@ -9,6 +9,7 @@ import { waitTime, handleAxiosError } from '@utils/tool'
 import { When } from 'react-if'
 import CategoryBar from '@components/CategoryBar'
 import SearchBar from '@components/SearchBar'
+import Spinner from '@assets/components/Spinner'
 
 async function fetchBooks(url: string) {
   // 模擬 loading 延遲
@@ -45,7 +46,7 @@ const Products: NextPage = function () {
         </When>
 
         <When condition={!books && !error}>
-          <div className="py-5 text-center">Loading...</div>
+          <Spinner />
         </When>
 
         <When condition={books?.length}>

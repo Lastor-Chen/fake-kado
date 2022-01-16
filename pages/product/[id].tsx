@@ -10,6 +10,7 @@ import type { ProductResponse } from 'pages/api/product/[id]'
 import { useRouter } from 'next/router'
 import { waitTime } from '@assets/utils/tool'
 import { When } from 'react-if'
+import Spinner from '@components/Spinner'
 
 /** 定義動態路由的 key name */
 type StaticPathParam = {
@@ -70,7 +71,11 @@ const Product: NextPage<ProductProps> = function ({ product: book }) {
   const router = useRouter()
 
   if (router.isFallback) {
-    return <ProductLoading />
+    return (
+      <Layout>
+        <Spinner />
+      </Layout>
+    )
   }
 
   return (
@@ -230,14 +235,6 @@ const Product: NextPage<ProductProps> = function ({ product: book }) {
           border-radius: 50rem;
         }
       `}</style>
-    </Layout>
-  )
-}
-
-function ProductLoading() {
-  return (
-    <Layout>
-      <div className="py-5 text-center">Loading...</div>
     </Layout>
   )
 }
