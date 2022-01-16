@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import type { PropsWithChildren } from 'react'
 
 const categoryData = [
   { name: '戀愛言情', color: 'pink', icon: 'cate-renai.svg' },
@@ -8,9 +9,13 @@ const categoryData = [
   { name: '全部作品', color: 'gray', icon: 'cate-all.svg' },
 ]
 
-export default function CategoryBar() {
+type CategoryBarProps = {
+  wrapperClass?: string
+}
+
+export default function CategoryBar(props: PropsWithChildren<CategoryBarProps>) {
   return (
-    <section className="cate-bar row row-cols-2 row-cols-sm-4">
+    <section className={`cate-bar row row-cols-2 row-cols-sm-4 ${props.wrapperClass}`}>
       {categoryData.map((cate, idx) => {
         return (
           <Link href="/products" passHref key={idx}>

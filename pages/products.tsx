@@ -8,6 +8,7 @@ import useSWR from 'swr'
 import { waitTime, handleAxiosError } from '@utils/tool'
 import { When } from 'react-if'
 import CategoryBar from '@components/CategoryBar'
+import SearchBar from '@components/SearchBar'
 
 async function fetchBooks(url: string) {
   // 模擬 loading 延遲
@@ -20,7 +21,7 @@ async function fetchBooks(url: string) {
   return data
 }
 
-const Products: NextPage = function () {
+const Products: NextPage = function (props) {
   const { data, error } = useSWR('/api/products', fetchBooks)
   if (error) {
     handleAxiosError(error)
@@ -35,6 +36,7 @@ const Products: NextPage = function () {
       </Head>
 
       <div className="container override px-3 px-sm-5 pt-4">
+        <SearchBar wrapperClass="mb-4" />
         <CategoryBar />
 
         <When condition={error}>
