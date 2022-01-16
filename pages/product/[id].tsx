@@ -7,6 +7,9 @@ import Navbar, { NavBarItem } from '@components/Navbar'
 import axios from 'axios'
 import type { ProductsQueryString, ProductsResponse } from 'pages/api/products'
 import type { ProductResponse } from 'pages/api/product/[id]'
+import { useRouter } from 'next/router'
+import { waitTime } from '@assets/utils/tool'
+import { When } from 'react-if'
 
 /** 定義動態路由的 key name */
 type StaticPathParam = {
@@ -35,7 +38,7 @@ export const getStaticPaths: GetStaticPaths<StaticPathParam> = async function ()
 
   return {
     paths: paths,
-    fallback: false,
+    fallback: true,
   }
 }
 
@@ -52,6 +55,11 @@ export async function getStaticProps(
   const book = data.results
   if (!book) return { notFound: true }
 
+  // 模擬 loading 延遲
+  if (process.env.NODE_ENV === 'development') {
+    await waitTime(1500)
+  }
+
   return {
     props: { product: book },
   }
@@ -59,6 +67,12 @@ export async function getStaticProps(
 
 // SSG + Dynamic Routes Page
 const Product: NextPage<ProductProps> = function ({ product: book }) {
+  const router = useRouter()
+
+  if (router.isFallback) {
+    return <ProductLoading />
+  }
+
   return (
     <Layout>
       <Head>
@@ -216,6 +230,14 @@ const Product: NextPage<ProductProps> = function ({ product: book }) {
           border-radius: 50rem;
         }
       `}</style>
+    </Layout>
+  )
+}
+
+function ProductLoading() {
+  return (
+    <Layout>
+      <div className="py-5 text-center">Loading...</div>
     </Layout>
   )
 }
