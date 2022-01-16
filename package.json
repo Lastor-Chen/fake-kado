@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "next dev",
     "seed": "node ./assets/seeds/books.seed.js",
-    "build": "node ./assets/seeds/books.seed.js & next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
