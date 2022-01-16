@@ -2,13 +2,10 @@ import Layout from '@components/Layout'
 import type { GetStaticPaths, GetStaticPathsResult, GetStaticPropsContext, GetStaticPropsResult, NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
+import booksData from '@seeds/books.json'
 import type { Book } from '@seeds/books'
 import Navbar, { NavBarItem } from '@components/Navbar'
-import axios from 'axios'
-import type { ProductsQueryString, ProductsResponse } from 'pages/api/products'
-import type { ProductResponse } from 'pages/api/product/[id]'
 import { useRouter } from 'next/router'
-import { waitTime, getAPIBaseURL } from '@assets/utils/tool'
 import Spinner from '@components/Spinner'
 
 /** 定義動態路由的 key name */
@@ -17,16 +14,10 @@ type StaticPathParam = {
 }
 type StaticPath = GetStaticPathsResult<StaticPathParam>['paths'][0]
 
-// 模擬 API Server 分離, 打 API 的情況
-const baseURL = getAPIBaseURL()
-
 export const getStaticPaths: GetStaticPaths<StaticPathParam> = async function () {
-  const params: ProductsQueryString = { order: 'DESC' }
-  const { data } = await axios.get<ProductsResponse>('/api/products', { baseURL, params })
-
-  // 僅取末 10 筆 (DESC) 做 pre-render
+  // 僅取末 10 筆做 pre-render
   // 以模擬部署後上架新商品的情況
-  const books = data.results.slice(0, 10)
+  const books = booksData.slice(-10)
   const paths = books.map((book): StaticPath => {
     return {
       params: { id: book.id.toString() },
@@ -47,15 +38,8 @@ export async function getStaticProps(
   context: GetStaticPropsContext<StaticPathParam>
 ): Promise<GetStaticPropsResult<ProductProps>> {
   const id = context.params?.id!
-
-  const { data } = await axios.get<ProductResponse>(`/api/product/${id}`, { baseURL })
-  const book = data.results
+  const book = booksData.find((book) => book.id === +id)
   if (!book) return { notFound: true }
-
-  // 模擬 loading 延遲
-  if (process.env.NODE_ENV === 'development') {
-    await waitTime(1500)
-  }
 
   return {
     props: { product: book },

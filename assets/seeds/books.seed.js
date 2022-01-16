@@ -33,7 +33,7 @@ const fakeBooks = [...Array(count)].map(
   /** @returns {Book} */
   (_, idx) => {
     return {
-      id: idx,
+      id: idx + 1,
       name: casual.title,
       author: casualJP.username,
       illustrator: casualJP.username,

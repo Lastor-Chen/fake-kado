@@ -12,11 +12,6 @@ import SearchBar from '@components/SearchBar'
 import Spinner from '@assets/components/Spinner'
 
 async function fetchBooks(url: string) {
-  // 模擬 loading 延遲
-  if (process.env.NODE_ENV === 'development') {
-    await waitTime(1500)
-  }
-
   const { data } = await axios.get<ProductsResponse>(url)
   if (data.status !== 'ok') throw new Error('Server Error')
   return data

@@ -1,5 +1,6 @@
 import axios from 'axios'
 
+/** 手動製作讀取延遲, 開發時用來觀察 Loading UI */
 export function waitTime(ms: number) {
   return new Promise((resolve) => {
     setTimeout(() => resolve(null), ms)
