@@ -1,6 +1,6 @@
 import Layout from '@assets/components/Layout'
 import SearchBar from '@assets/components/SearchBar'
-import { handleAxiosError } from '@assets/utils/tool'
+import { handleAxiosError, getAPIBaseURL } from '@assets/utils/tool'
 import axios from 'axios'
 import type { NextPage, GetServerSidePropsResult, GetServerSidePropsContext } from 'next'
 import type { ProductsResponse, ProductsQueryString } from '../pages/api/products'
@@ -19,14 +19,12 @@ type SearchResult = {
   books: Book[]
 }
 
-// 純 SSR Page
 export async function getServerSideProps(context: OverrideContext): Promise<GetServerSidePropsResult<SearchResult>> {
   const searchKeyWord = context.query.q || ''
 
-  // 模擬 API Server 分離, 打 API 的情況
-  const host = context.req.headers.host
-  const baseURL = process.env.NODE_ENV === 'development' ? `http://${host}` : `https://${host}`
   try {
+    // 模擬 API Server 分離, 打 API 的情況
+    const baseURL = getAPIBaseURL()
     const params: ProductsQueryString = { q: searchKeyWord, order: 'DESC' }
     const { data } = await axios.get<ProductsResponse>(`/api/products`, { baseURL, params })
 
@@ -41,6 +39,7 @@ export async function getServerSideProps(context: OverrideContext): Promise<GetS
   }
 }
 
+// SSR Page
 const Search: NextPage<SearchResult> = function (props) {
   const books = props.books
 

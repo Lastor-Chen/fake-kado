@@ -1,18 +1,79 @@
 import Layout from '@components/Layout'
-import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
-import type { PropsWithChildren } from 'react'
+import type { GetStaticPaths, GetStaticPathsResult, GetStaticPropsContext, GetStaticPropsResult, NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
-import books from '@seeds/books.json'
 import type { Book } from '@seeds/books'
-import type { QueryParam } from '../api/product/[id]'
 import Navbar, { NavBarItem } from '@components/Navbar'
+import axios from 'axios'
+import type { ProductsQueryString, ProductsResponse } from 'pages/api/products'
+import type { ProductResponse } from 'pages/api/product/[id]'
+import { useRouter } from 'next/router'
+import { waitTime, getAPIBaseURL } from '@assets/utils/tool'
+import Spinner from '@components/Spinner'
 
-interface ProductProps {
+/** 定義動態路由的 key name */
+type StaticPathParam = {
+  id?: string
+}
+type StaticPath = GetStaticPathsResult<StaticPathParam>['paths'][0]
+
+// 模擬 API Server 分離, 打 API 的情況
+const baseURL = getAPIBaseURL()
+
+export const getStaticPaths: GetStaticPaths<StaticPathParam> = async function () {
+  const params: ProductsQueryString = { order: 'DESC' }
+  const { data } = await axios.get<ProductsResponse>('/api/products', { baseURL, params })
+
+  // 僅取末 10 筆 (DESC) 做 pre-render
+  // 以模擬部署後上架新商品的情況
+  const books = data.results.slice(0, 10)
+  const paths = books.map((book): StaticPath => {
+    return {
+      params: { id: book.id.toString() },
+    }
+  })
+
+  return {
+    paths: paths,
+    fallback: true,
+  }
+}
+
+type ProductProps = {
   product: Book
 }
 
-export default function Product({ product: book }: PropsWithChildren<ProductProps>) {
+export async function getStaticProps(
+  context: GetStaticPropsContext<StaticPathParam>
+): Promise<GetStaticPropsResult<ProductProps>> {
+  const id = context.params?.id!
+
+  const { data } = await axios.get<ProductResponse>(`/api/product/${id}`, { baseURL })
+  const book = data.results
+  if (!book) return { notFound: true }
+
+  // 模擬 loading 延遲
+  if (process.env.NODE_ENV === 'development') {
+    await waitTime(1500)
+  }
+
+  return {
+    props: { product: book },
+  }
+}
+
+// SSG + Dynamic Routes Page
+const Product: NextPage<ProductProps> = function ({ product: book }) {
+  const router = useRouter()
+
+  if (router.isFallback) {
+    return (
+      <Layout>
+        <Spinner />
+      </Layout>
+    )
+  }
+
   return (
     <Layout>
       <Head>
@@ -46,7 +107,9 @@ export default function Product({ product: book }: PropsWithChildren<ProductProp
             <div className="mt-3 mt-sm-auto">
               <div className="d-flex flex-wrap gap-2">
                 {book.categories.map((name, idx) => (
-                  <span className="icon-outline-light" key={`tc${idx}`}>{name}</span>
+                  <span className="icon-outline-light" key={`tc${idx}`}>
+                    {name}
+                  </span>
                 ))}
               </div>
             </div>
@@ -80,7 +143,9 @@ export default function Product({ product: book }: PropsWithChildren<ProductProp
           <h6 className="fw-bold mb-4">分類</h6>
           <div className="d-flex flex-wrap gap-2 small">
             {book.categories.map((name, idx) => (
-              <span className="icon-primary" key={`bc${idx}`}>{name}</span>
+              <span className="icon-primary" key={`bc${idx}`}>
+                {name}
+              </span>
             ))}
           </div>
         </section>
@@ -170,15 +235,4 @@ export default function Product({ product: book }: PropsWithChildren<ProductProp
   )
 }
 
-export const getServerSideProps = async function (
-  context: GetServerSidePropsContext<QueryParam>
-): Promise<GetServerSidePropsResult<ProductProps>> {
-  const productId = context.params?.id
-  const book = books.find((book) => book.id === Number(productId))
-
-  if (!book) return { notFound: true }
-
-  return {
-    props: { product: book },
-  }
-}
+export default Product
