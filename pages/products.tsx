@@ -3,7 +3,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import axios from 'axios'
 import ProductCard from '@components/ProductCard'
-import type { Response } from './api/products'
+import type { ProductsResponse } from './api/products'
 import useSWR from 'swr'
 import { waitTime, handleAxiosError } from '@utils/tool'
 import { When } from 'react-if'
@@ -16,7 +16,7 @@ async function fetchBooks(url: string) {
     await waitTime(1500)
   }
 
-  const { data } = await axios.get<Response>(url)
+  const { data } = await axios.get<ProductsResponse>(url)
   if (data.status !== 'ok') throw new Error('Server Error')
   return data
 }

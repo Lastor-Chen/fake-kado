@@ -3,17 +3,30 @@ import { books } from '@seeds/books'
 import type { Book } from '@seeds/books'
 import type { APIResponse } from '@utils/api/types'
 
-export interface Response extends APIResponse {
+export interface ProductsResponse extends APIResponse {
   results: Book[]
 }
 
-export default function controller(req: NextApiRequest, res: NextApiResponse<Response>) {
+interface OverrideRequest extends NextApiRequest {
+  query: { q: string }
+}
+
+export default function controller(req: OverrideRequest, res: NextApiResponse<ProductsResponse>) {
   if (req.method !== 'GET') {
     return res.status(404).json({ status: 'error', results: [] })
   }
 
-  // sort by DESC
-  books.sort((a, b) => b.id - a.id)
+  // Search 請求
+  const keyWord = req.query.q || ''
+  const results = books.filter(
+    (book) =>
+      book.name.includes(keyWord) ||
+      book.categories.some((cateName) => cateName.includes(keyWord)) ||
+      book.author.includes(keyWord)
+  )
 
-  res.status(200).json({ status: 'ok', results: books })
+  // Sort by DESC
+  results.sort((a, b) => b.id - a.id)
+
+  res.status(200).json({ status: 'ok', results: results })
 }

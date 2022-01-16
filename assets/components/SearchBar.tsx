@@ -1,16 +1,22 @@
 import { useRouter } from "next/router"
 import type { FormEvent, PropsWithChildren } from "react"
+import { useState } from 'react'
 
 type SearchBarProps = {
   wrapperClass?: string
 }
 
 export default function SearchBar (props: PropsWithChildren<SearchBarProps>) {
+  const [search, setSearch] = useState('')
   const router = useRouter()
+
   const onSearch = (e: FormEvent) => {
-    console.log('search')
     e.preventDefault()
-    router.push('/product/1')
+    const query = search.trim()
+    router.push({
+      pathname: '/search',
+      query: { q: query },
+    })
   }
 
   return (
@@ -18,7 +24,12 @@ export default function SearchBar (props: PropsWithChildren<SearchBarProps>) {
       <form action="/products" onSubmit={onSearch}>
         <div className="search-group">
           <span className="search-btn"></span>
-          <input type="text" placeholder="請輸入想搜尋的作品名、分類" />
+          <input
+            type="text"
+            placeholder="請輸入想搜尋的作品名、分類"
+            value={search}
+            onChange={(e) => setSearch(e.currentTarget.value)}
+          />
         </div>
       </form>
 
