@@ -14,9 +14,9 @@ type StaticPathParam = {
 }
 type StaticPath = GetStaticPathsResult<StaticPathParam>['paths'][0]
 
+// 決定 pre-render 數量
 export const getStaticPaths: GetStaticPaths<StaticPathParam> = async function () {
-  // 僅取末 10 筆做 pre-render
-  // 以模擬部署後上架新商品的情況
+  // 僅取末 10 筆做 pre-render, 以模擬部署後上架新商品的情況
   const books = booksData.slice(-10)
   const paths = books.map((book): StaticPath => {
     return {
