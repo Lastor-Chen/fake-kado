@@ -4,7 +4,7 @@ import Head from 'next/head'
 import ProductCard from '@components/ProductCard'
 import type { ProductsResponse } from '@pages/api/products'
 import { handleAxiosError, fetchBooks } from '@utils/tool'
-import { When } from 'react-if'
+import { Unless, When } from 'react-if'
 import CategoryBar from '@components/CategoryBar'
 import SearchBar from '@components/SearchBar'
 import Spinner from '@assets/components/Spinner'
@@ -25,6 +25,7 @@ const Products: NextPage = function () {
   // 該 hook 會先更新 size -> 打 API -> 更新 data
   // 利用這個特性，可以取得 isLoading flag
   const isLoading = data?.length !== size
+  const isFirstLoading = !data?.length
 
   // products API 會回 totalPage
   const totalPage = data?.[0].totalPage
@@ -51,16 +52,16 @@ const Products: NextPage = function () {
                 />
               ))
             })}
-            <When condition={error}>
-              <div className="w-100 py-3 text-center">Failed to fetch data.</div>
-            </When>
-            <When condition={isLoading && !error}>
-              <Spinner wrapperClass="w-100 py-3" />
-            </When>
           </div>
-          <When condition={!isFinished}>
-            <SeeMoreBtn onClick={() => setSize(size + 1)} />
+          <When condition={error}>
+            <div className="w-100 py-4 text-center">Failed to fetch data.</div>
           </When>
+          <When condition={isLoading && !error}>
+            <Spinner wrapperClass="w-100 py-4" />
+          </When>
+          <Unless condition={isFinished || isFirstLoading}>
+            <SeeMoreBtn wrapperClass="mt-4" onClick={() => setSize(size + 1)} disabled={isLoading} />
+          </Unless>
         </section>
       </div>
 
