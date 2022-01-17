@@ -20,6 +20,7 @@ interface ProductsRequest extends NextApiRequest {
 export interface ProductsResponse extends APIResponse {
   results: Book[]
   totalPage?: number
+  page?: number
 }
 
 export default function controller(req: ProductsRequest, res: NextApiResponse<ProductsResponse>) {
@@ -52,14 +53,15 @@ export default function controller(req: ProductsRequest, res: NextApiResponse<Pr
   // 切分頁
   let results = searchedBooks
   let totalPage: number | undefined = undefined
+  let page: number | undefined = undefined
   if (req.query.limit && req.query.page) {
     const limit = Number(req.query.limit)
-    const page = Number(req.query.page)
+    page = Number(req.query.page)
     totalPage = Math.ceil(searchedBooks.length / limit)
 
     const offset = limit * (page - 1)
     results = searchedBooks.slice(offset, limit * page)
   }
 
-  res.status(200).json({ status: 'ok', totalPage, results })
+  res.status(200).json({ status: 'ok', totalPage, page, results })
 }

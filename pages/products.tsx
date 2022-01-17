@@ -22,8 +22,7 @@ const Products: NextPage = function () {
 
   // Memo:
   // useSWRInfinite 提供的 isValidating 無法當作 isLoading flag
-  // 用 useSWR 的話，父組件無法拿到任何 flag 做進一步條件判斷
-  // useSWRInfinite 會先更新 size -> 打 API -> 更新 data
+  // 該 hook 會先更新 size -> 打 API -> 更新 data
   // 利用這個特性，可以取得 isLoading flag
   const isLoading = data?.length !== size
 
