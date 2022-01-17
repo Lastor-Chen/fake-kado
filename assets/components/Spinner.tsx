@@ -5,9 +5,13 @@ type SpinnerProps = {
 }
 
 export default function Spinner(props: PropsWithChildren<SpinnerProps>) {
+  let wrapperClass = 'text-center'
+  if (props.wrapperClass) {
+    wrapperClass += ` ${props.wrapperClass}`
+  }
   return (
     <>
-      <div className={`py-5 text-center ${props.wrapperClass}`}>
+      <div className={wrapperClass}>
         <div className="spinner-border color" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
