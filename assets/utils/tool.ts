@@ -1,4 +1,5 @@
 import axios from 'axios'
+import type { ProductsResponse, ProductsQueryString } from '@pages/api/products'
 
 /** 手動製作讀取延遲, 開發時用來觀察 Loading UI */
 export function waitTime(ms: number) {
@@ -19,4 +20,16 @@ export function handleAxiosError(err: any) {
 export function getAPIBaseURL() {
   // 僅部署後會設置 HOST 環境變數
   return process.env.HOST ? `https://${process.env.HOST}` : `http://localhost:3000`
+}
+
+export async function fetchBooks(url: string, limit: number, pageIdx: number, keyword?: string, baseURL?: string) {
+  const params: ProductsQueryString = {
+    q: keyword,
+    order: 'DESC',
+    limit: limit.toString(),
+    page: pageIdx.toString(),
+  }
+  const { data } = await axios.get<ProductsResponse>(url, { params, baseURL })
+  if (data.status !== 'ok') throw new Error('Server Error')
+  return data
 }

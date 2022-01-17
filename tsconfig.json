@@ -20,7 +20,8 @@
       "@components/*": ["assets/components/*"],
       "@styles/*": ["assets/styles/*"],
       "@seeds/*": ["assets/seeds/*"],
-      "@utils/*": ["assets/utils/*"]
+      "@utils/*": ["assets/utils/*"],
+      "@pages/*": ["pages/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "assets/seeds/booksts"],

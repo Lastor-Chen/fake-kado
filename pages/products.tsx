@@ -1,15 +1,15 @@
 import Layout from '@components/Layout'
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import axios from 'axios'
 import ProductCard from '@components/ProductCard'
-import type { ProductsResponse } from './api/products'
-import { handleAxiosError } from '@utils/tool'
+import type { ProductsResponse } from '@pages/api/products'
+import { handleAxiosError, fetchBooks } from '@utils/tool'
 import { When } from 'react-if'
 import CategoryBar from '@components/CategoryBar'
 import SearchBar from '@components/SearchBar'
 import Spinner from '@assets/components/Spinner'
 import useSWRInfinite from 'swr/infinite'
+import SeeMoreBtn from '@assets/components/SeeMoreBtn'
 
 const LIMIT = 10 // 設定單頁筆數
 
@@ -59,11 +59,7 @@ const Products: NextPage = function () {
             </When>
           </div>
           <When condition={!isFinished}>
-            <div className="mt-4 text-center">
-              <button className="more-btn primary-btn small fw-bold" onClick={() => setSize(size + 1)}>
-                看更多
-              </button>
-            </div>
+            <SeeMoreBtn onClick={() => setSize(size + 1)} />
           </When>
         </section>
       </div>
@@ -71,22 +67,6 @@ const Products: NextPage = function () {
       <style jsx>{`
         .container.override {
           max-width: 1024px;
-        }
-
-        .more-btn {
-          display: inline-block;
-          width: 75%;
-          max-width: 256px;
-          border-radius: 50rem;
-          border: none;
-          background-color: transparent;
-        }
-
-        .primary-btn {
-          color: white;
-          background-color: var(--theme-ui-colors-primary);
-          border: 1px solid white;
-          padding: 0.75rem 0;
         }
       `}</style>
     </Layout>
@@ -104,11 +84,5 @@ function getKey(pageIdx: number, preResponse: ProductsResponse) {
   // getKey 的 pageIdx 是 0 起始
   // products API 設計是 1 起始
   const page = pageIdx + 1
-  return `/api/products?order=DESC&limit=${LIMIT}&page=${page}`
-}
-
-async function fetchBooks(url: string) {
-  const { data } = await axios.get<ProductsResponse>(url)
-  if (data.status !== 'ok') throw new Error('Server Error')
-  return data
+  return ['/api/products', LIMIT, page]
 }

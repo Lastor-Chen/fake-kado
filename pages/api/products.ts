@@ -18,9 +18,10 @@ interface ProductsRequest extends NextApiRequest {
 
 /** 定義此 API 回傳值 */
 export interface ProductsResponse extends APIResponse {
-  results: Book[]
+  count?: number
   totalPage?: number
   page?: number
+  results: Book[]
 }
 
 export default function controller(req: ProductsRequest, res: NextApiResponse<ProductsResponse>) {
@@ -54,6 +55,7 @@ export default function controller(req: ProductsRequest, res: NextApiResponse<Pr
   let results = searchedBooks
   let totalPage: number | undefined = undefined
   let page: number | undefined = undefined
+  let count: number | undefined = undefined
   if (req.query.limit && req.query.page) {
     const limit = Number(req.query.limit)
     page = Number(req.query.page)
@@ -61,7 +63,8 @@ export default function controller(req: ProductsRequest, res: NextApiResponse<Pr
 
     const offset = limit * (page - 1)
     results = searchedBooks.slice(offset, limit * page)
+    count = searchedBooks.length
   }
 
-  res.status(200).json({ status: 'ok', totalPage, page, results })
+  res.status(200).json({ status: 'ok', count, totalPage, page, results })
 }

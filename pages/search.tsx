@@ -1,9 +1,8 @@
 import Layout from '@assets/components/Layout'
 import SearchBar from '@assets/components/SearchBar'
-import { handleAxiosError, getAPIBaseURL } from '@assets/utils/tool'
-import axios from 'axios'
+import { handleAxiosError, getAPIBaseURL, fetchBooks } from '@assets/utils/tool'
 import type { NextPage, GetServerSidePropsResult, GetServerSidePropsContext } from 'next'
-import type { ProductsResponse, ProductsQueryString } from '../pages/api/products'
+import type { ProductsQueryString } from '@pages/api/products'
 import type { Book } from '@assets/seeds/books'
 import Head from 'next/head'
 import ProductCard from '@assets/components/ProductCard'
@@ -11,7 +10,7 @@ import useSWR from 'swr'
 import { When } from 'react-if'
 import Spinner from '@assets/components/Spinner'
 import { useState } from 'react'
-import type { MouseEventHandler } from 'react'
+import SeeMoreBtn from '@components/SeeMoreBtn'
 
 /** 接收的 Query String 定義 */
 interface OverrideContext extends GetServerSidePropsContext {
@@ -24,6 +23,7 @@ type SearchResult = {
   books: Book[]
   totalPage: number
   page: number
+  count: number
 }
 
 const LIMIT = 10 // 設定單頁筆數
@@ -34,20 +34,22 @@ export async function getServerSideProps(context: OverrideContext): Promise<GetS
   try {
     // 模擬 API Server 分離, 打 API 的情況
     const baseURL = getAPIBaseURL()
-    const data = await fetchBooks(`/api/products`, searchKeyWord, 1, baseURL)
+    const page = 1
+    const data = await fetchBooks(`/api/products`, LIMIT, page, searchKeyWord, baseURL)
 
     return {
       props: {
         books: data.results,
+        count: data.count!,
         totalPage: data.totalPage!,
         page: data.page!,
-        keyword: searchKeyWord
+        keyword: searchKeyWord,
       },
     }
   } catch (e) {
     handleAxiosError(e)
     return {
-      props: { books: [], totalPage: 0, page: 0, keyword: searchKeyWord },
+      props: { books: [], count: 0, totalPage: 0, page: 0, keyword: searchKeyWord },
     }
   }
 }
@@ -55,14 +57,14 @@ export async function getServerSideProps(context: OverrideContext): Promise<GetS
 // SSR + CSR Page
 // Server 端渲染第一批分頁, 後續由 CSR 獲取
 const Search: NextPage<SearchResult> = function (props) {
-  const { keyword, books, totalPage } = props
+  const { keyword, books, totalPage, count } = props
   const [pageIdx, setPageIdx] = useState(1)
   const isFinished = pageIdx >= totalPage
 
   // SSR 拿到的第一批資料
   const firstBooks = books
 
-  // Client 端處理後續的下拉分頁
+  // Client 端處理第2頁開始的下拉分頁
   const pagesCSR: JSX.Element[] = []
   for (let idx = 2; idx <= pageIdx; idx++) {
     pagesCSR.push(<Page pageIdx={idx} keyword={keyword} key={idx} />)
@@ -80,7 +82,7 @@ const Search: NextPage<SearchResult> = function (props) {
         <div className="info-bar d-flex py-3 small border-bottom">
           <div>
             {'共'}
-            <span className="color-primary mx-1">{firstBooks.length}</span>
+            <span className="color-primary mx-1">{count}</span>
             {'部作品'}
           </div>
         </div>
@@ -121,26 +123,13 @@ const Search: NextPage<SearchResult> = function (props) {
 
 export default Search
 
-
-// 拆分組件 and methods
+// 拆分組件
 // =======================
 
-async function fetchBooks(url: string, keyword: string, pageIdx: number, baseURL?: string) {
-  const params: ProductsQueryString = {
-    q: keyword,
-    order: 'DESC',
-    limit: LIMIT.toString(),
-    page: pageIdx.toString(),
-  }
-  const { data } = await axios.get<ProductsResponse>(url, { params, baseURL })
-  if (data.status !== 'ok') throw new Error('Server Error')
-  return data
-}
-
 /** 分頁單位組件 */
-function Page(props: { pageIdx: number, keyword: string }) {
+function Page(props: { pageIdx: number; keyword: string }) {
   const { pageIdx, keyword } = props
-  const { data, error } = useSWR([`/api/products`, keyword, pageIdx], fetchBooks)
+  const { data, error } = useSWR([`/api/products`, LIMIT, pageIdx, keyword], fetchBooks)
   if (error) {
     handleAxiosError(error)
   }
@@ -162,37 +151,7 @@ function Page(props: { pageIdx: number, keyword: string }) {
       <When condition={!cards.length && !error}>
         <Spinner wrapperClass="w-100 py-3" />
       </When>
-      <When condition={cards.length}>
-        {() => cards}
-      </When>
+      <When condition={cards.length}>{() => cards}</When>
     </>
-  )
-}
-
-function SeeMoreBtn({ onClick }: { onClick: MouseEventHandler<HTMLButtonElement> }) {
-  return (
-    <div className="mt-4 text-center">
-      <button className="more-btn primary-btn small fw-bold" onClick={onClick}>
-        看更多
-      </button>
-
-      <style jsx>{`
-        .more-btn {
-          display: inline-block;
-          width: 75%;
-          max-width: 256px;
-          border-radius: 50rem;
-          border: none;
-          background-color: transparent;
-        }
-
-        .primary-btn {
-          color: white;
-          background-color: var(--theme-ui-colors-primary);
-          border: 1px solid white;
-          padding: 0.75rem 0;
-        }
-      `}</style>
-    </div>
   )
 }
