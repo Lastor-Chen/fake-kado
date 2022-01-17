@@ -9,8 +9,12 @@ interface ProductCardProps {
 }
 
 const ProductCard: FC<ProductCardProps> = function ({ wrapperClass, product }) {
+  let defaultClass = 'd-flex row-cols-2'
+  if (wrapperClass) {
+    defaultClass += ` ${wrapperClass}`
+  }
   return (
-    <div className={`${wrapperClass} d-flex row-cols-2`}>
+    <div className={defaultClass}>
       <div className="col text-center">
         <Link href={`/product/${product.id}`}>
           <a className="d-inline-block next-img-fix bevel">

@@ -7,9 +7,9 @@ import type { APIResponse } from '@utils/api/types'
 export type ProductsQueryString = {
   q?: string
   order?: 'ASC' | 'DESC'
-  /** 字串 number, 一頁幾筆 */
+  /** 字串 number, 一頁幾筆, 需搭配 page key */
   limit?: string
-  /** 字串 number, 第幾頁 */
+  /** 字串 number, 第幾頁, 需搭配 limit key */
   page?: string
 }
 interface ProductsRequest extends NextApiRequest {

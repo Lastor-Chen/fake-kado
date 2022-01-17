@@ -5,33 +5,25 @@ import axios from 'axios'
 import ProductCard from '@components/ProductCard'
 import type { ProductsResponse } from './api/products'
 import useSWR from 'swr'
-import { handleAxiosError, waitTime } from '@utils/tool'
+import { handleAxiosError } from '@utils/tool'
 import { When } from 'react-if'
 import CategoryBar from '@components/CategoryBar'
 import SearchBar from '@components/SearchBar'
 import Spinner from '@assets/components/Spinner'
-import { useEffect, useState } from 'react'
-import type { Book } from '@assets/seeds/books'
+import { useState } from 'react'
+import type { MouseEventHandler } from 'react'
 
-async function fetchBooks(url: string) {
-  await waitTime(1500)
-
-  const { data } = await axios.get<ProductsResponse>(url)
-  if (data.status !== 'ok') throw new Error('Server Error')
-  return data
-}
+const LIMIT = 10 // 設定單頁筆數
 
 // SSG without data + CSR Page
 const Products: NextPage = function () {
   const [pageIdx, setPageIdx] = useState(1)
-  const { data, error } = useSWR('/api/products?order=DESC', fetchBooks)
-  if (error) {
-    handleAxiosError(error)
-  }
 
-  const limit = 10
-  const offset = pageIdx * limit
-  const books = data?.results.slice(0, offset)
+  // 下拉分頁
+  const pages: JSX.Element[] = []
+  for (let idx = 1; idx <= pageIdx; idx++) {
+    pages.push(<Page pageIdx={idx} key={idx} />)
+  }
 
   return (
     <Layout hasNav>
@@ -43,41 +35,73 @@ const Products: NextPage = function () {
         <SearchBar wrapperClass="mb-4" />
         <CategoryBar />
 
-        <When condition={error}>
-          <div className="py-5 text-center">Failed to fetch data.</div>
-        </When>
-
-        <When condition={!books && !error}>
-          <Spinner />
-        </When>
-
-        <When condition={books?.length}>
-          {() => (
-            <section className="py-5">
-              <div className="row row-cols-1 row-cols-md-2">
-                {books?.map((book) => (
-                  <ProductCard
-                    key={book.id} //
-                    product={book}
-                    wrapperClass="col mb-4"
-                  />
-                ))}
-              </div>
-              <div className="mt-4 text-center">
-                <button className="more-btn btn-primary small fw-bold" onClick={() => setPageIdx(pageIdx + 1)}>
-                  看更多
-                </button>
-              </div>
-            </section>
-          )}
-        </When>
+        <section className="py-5">
+          <div className="row row-cols-1 row-cols-md-2">
+            {pages}
+          </div>
+          <SeeMoreBtn onClick={() => setPageIdx(pageIdx + 1)} />
+        </section>
       </div>
 
       <style jsx>{`
         .container.override {
           max-width: 1024px;
         }
+      `}</style>
+    </Layout>
+  )
+}
 
+export default Products
+
+// 拆分組件 and methods
+// =======================
+
+async function fetchBooks(url: string) {
+  const { data } = await axios.get<ProductsResponse>(url)
+  if (data.status !== 'ok') throw new Error('Server Error')
+  return data
+}
+
+/** 分頁單位組件 */
+function Page(props: { pageIdx: number }) {
+  const { data, error } = useSWR(`/api/products?order=DESC&limit=${LIMIT}&page=${props.pageIdx}`, fetchBooks)
+  if (error) {
+    handleAxiosError(error)
+  }
+
+  const books = data?.results || []
+  const cards = books.map((book) => (
+    <ProductCard
+      key={book.id} //
+      product={book}
+      wrapperClass="col mb-4"
+    />
+  ))
+
+  return (
+    <>
+      <When condition={error}>
+        <div className="w-100 py-3 text-center">Failed to fetch data.</div>
+      </When>
+      <When condition={!cards.length && !error}>
+        <Spinner wrapperClass="w-100 py-3" />
+      </When>
+      <When condition={cards.length}>
+        {() => cards}
+      </When>
+    </>
+  )
+}
+
+function SeeMoreBtn({ onClick }: { onClick: MouseEventHandler<HTMLButtonElement> }) {
+  return (
+    <div className="mt-4 text-center">
+      <button className="more-btn btn-primary small fw-bold" onClick={onClick}>
+        看更多
+      </button>
+
+      <style jsx>{`
         .more-btn {
           display: inline-block;
           width: 75%;
@@ -94,8 +118,6 @@ const Products: NextPage = function () {
           padding: 0.75rem 0;
         }
       `}</style>
-    </Layout>
+    </div>
   )
 }
-
-export default Products

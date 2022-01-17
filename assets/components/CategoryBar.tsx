@@ -14,8 +14,12 @@ type CategoryBarProps = {
 }
 
 export default function CategoryBar(props: PropsWithChildren<CategoryBarProps>) {
+  let defaultClass = 'cate-bar row row-cols-2 row-cols-sm-4'
+  if (props.wrapperClass) {
+    defaultClass += ` ${props.wrapperClass}`
+  }
   return (
-    <section className={`cate-bar row row-cols-2 row-cols-sm-4 ${props.wrapperClass}`}>
+    <section className={defaultClass}>
       {categoryData.map((cate, idx) => {
         const keyword = cate.name === '全部作品' ? '' : cate.name
         return (

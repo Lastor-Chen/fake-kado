@@ -53,7 +53,7 @@ const Product: NextPage<ProductProps> = function ({ product: book }) {
   if (router.isFallback) {
     return (
       <Layout>
-        <Spinner />
+        <Spinner wrapperClass="py-5" />
       </Layout>
     )
   }
