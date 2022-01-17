@@ -4,26 +4,32 @@ import Head from 'next/head'
 import axios from 'axios'
 import ProductCard from '@components/ProductCard'
 import type { ProductsResponse } from './api/products'
-import useSWR from 'swr'
 import { handleAxiosError } from '@utils/tool'
 import { When } from 'react-if'
 import CategoryBar from '@components/CategoryBar'
 import SearchBar from '@components/SearchBar'
 import Spinner from '@assets/components/Spinner'
-import { useState } from 'react'
-import type { MouseEventHandler } from 'react'
+import useSWRInfinite from 'swr/infinite'
 
 const LIMIT = 10 // 設定單頁筆數
 
 // SSG without data + CSR Page
 const Products: NextPage = function () {
-  const [pageIdx, setPageIdx] = useState(1)
-
-  // 下拉分頁
-  const pages: JSX.Element[] = []
-  for (let idx = 1; idx <= pageIdx; idx++) {
-    pages.push(<Page pageIdx={idx} key={idx} />)
+  const { data, size, setSize, error } = useSWRInfinite(getKey, fetchBooks)
+  if (error) {
+    handleAxiosError(error)
   }
+
+  // Memo:
+  // useSWRInfinite 提供的 isValidating 無法當作 isLoading flag
+  // 用 useSWR 的話，父組件無法拿到任何 flag 做進一步條件判斷
+  // useSWRInfinite 會先更新 size -> 打 API -> 更新 data
+  // 利用這個特性，可以取得 isLoading flag
+  const isLoading = data?.length !== size
+
+  // products API 會回 totalPage
+  const totalPage = data?.[0].totalPage
+  const isFinished = size >= totalPage!
 
   return (
     <Layout hasNav>
@@ -37,9 +43,29 @@ const Products: NextPage = function () {
 
         <section className="py-5">
           <div className="row row-cols-1 row-cols-md-2">
-            {pages}
+            {data?.map((res) => {
+              return res.results.map((book) => (
+                <ProductCard
+                  key={book.id} //
+                  product={book}
+                  wrapperClass="col mb-4"
+                />
+              ))
+            })}
+            <When condition={error}>
+              <div className="w-100 py-3 text-center">Failed to fetch data.</div>
+            </When>
+            <When condition={isLoading && !error}>
+              <Spinner wrapperClass="w-100 py-3" />
+            </When>
           </div>
-          <SeeMoreBtn onClick={() => setPageIdx(pageIdx + 1)} />
+          <When condition={!isFinished}>
+            <div className="mt-4 text-center">
+              <button className="more-btn primary-btn small fw-bold" onClick={() => setSize(size + 1)}>
+                看更多
+              </button>
+            </div>
+          </When>
         </section>
       </div>
 
@@ -47,61 +73,7 @@ const Products: NextPage = function () {
         .container.override {
           max-width: 1024px;
         }
-      `}</style>
-    </Layout>
-  )
-}
 
-export default Products
-
-// 拆分組件 and methods
-// =======================
-
-async function fetchBooks(url: string) {
-  const { data } = await axios.get<ProductsResponse>(url)
-  if (data.status !== 'ok') throw new Error('Server Error')
-  return data
-}
-
-/** 分頁單位組件 */
-function Page(props: { pageIdx: number }) {
-  const { data, error } = useSWR(`/api/products?order=DESC&limit=${LIMIT}&page=${props.pageIdx}`, fetchBooks)
-  if (error) {
-    handleAxiosError(error)
-  }
-
-  const books = data?.results || []
-  const cards = books.map((book) => (
-    <ProductCard
-      key={book.id} //
-      product={book}
-      wrapperClass="col mb-4"
-    />
-  ))
-
-  return (
-    <>
-      <When condition={error}>
-        <div className="w-100 py-3 text-center">Failed to fetch data.</div>
-      </When>
-      <When condition={!cards.length && !error}>
-        <Spinner wrapperClass="w-100 py-3" />
-      </When>
-      <When condition={cards.length}>
-        {() => cards}
-      </When>
-    </>
-  )
-}
-
-function SeeMoreBtn({ onClick }: { onClick: MouseEventHandler<HTMLButtonElement> }) {
-  return (
-    <div className="mt-4 text-center">
-      <button className="more-btn btn-primary small fw-bold" onClick={onClick}>
-        看更多
-      </button>
-
-      <style jsx>{`
         .more-btn {
           display: inline-block;
           width: 75%;
@@ -111,13 +83,33 @@ function SeeMoreBtn({ onClick }: { onClick: MouseEventHandler<HTMLButtonElement>
           background-color: transparent;
         }
 
-        .btn-primary {
+        .primary-btn {
           color: white;
           background-color: var(--theme-ui-colors-primary);
           border: 1px solid white;
           padding: 0.75rem 0;
         }
       `}</style>
-    </div>
+    </Layout>
   )
+}
+
+export default Products
+
+// Methods
+// =======================
+
+function getKey(pageIdx: number, preResponse: ProductsResponse) {
+  if (preResponse && preResponse.results.length < LIMIT) return null
+
+  // getKey 的 pageIdx 是 0 起始
+  // products API 設計是 1 起始
+  const page = pageIdx + 1
+  return `/api/products?order=DESC&limit=${LIMIT}&page=${page}`
+}
+
+async function fetchBooks(url: string) {
+  const { data } = await axios.get<ProductsResponse>(url)
+  if (data.status !== 'ok') throw new Error('Server Error')
+  return data
 }
