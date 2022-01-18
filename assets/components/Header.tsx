@@ -1,12 +1,29 @@
 import type { NextPage } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useEffect, useRef } from 'react'
 
 const Header: NextPage = function () {
   const btnNames = ['light', 'bell', 'member']
 
+  const wrapperDOM = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    function handleScroll() {
+      const currentScrollY = window.scrollY
+      if (currentScrollY > 500) {
+        wrapperDOM.current!.style.top = '-64px'
+      } else {
+        wrapperDOM.current!.style.top = '0px'
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   return (
-    <header className="sticky d-flex justify-content-between align-items-center px-3 bg-white">
+    <header className="sticky d-flex justify-content-between align-items-center px-3 bg-white" ref={wrapperDOM}>
       <Link href="/products">
         <a className="next-img-fix">
           <Image src="/images/kado-logo.svg" width="64" height="64" alt="logo" />
@@ -24,8 +41,8 @@ const Header: NextPage = function () {
       <style jsx>{`
         .sticky {
           position: sticky;
-          top: 0;
           z-index: 10;
+          transition: top .2s linear;
         }
 
         .icon {

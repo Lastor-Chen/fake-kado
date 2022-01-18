@@ -1,6 +1,6 @@
 import { NextPage } from 'next'
 import Link from 'next/link'
-import React, { isValidElement } from 'react'
+import React, { isValidElement, useEffect, useRef, useCallback } from 'react'
 import { If, Then, Else } from 'react-if'
 import type { UrlObject } from 'url'
 
@@ -44,8 +44,24 @@ const Navbar: NextPage = function (props) {
     }
   }
 
+  const wrapperDOM = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    function handleScroll() {
+      const currentScrollY = window.scrollY
+      if (currentScrollY > 500) {
+        wrapperDOM.current!.style.top = '0'
+      } else {
+        wrapperDOM.current!.style.top = '4rem'
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [wrapperDOM])
+
   return (
-    <nav className="sticky bg-white">
+    <nav className="sticky bg-white" style={{ top: '4rem' }} ref={wrapperDOM}>
       <div className="nav justify-content-center override-nav override-link">
         {React.Children.map(children, (child: React.ReactElement<NavBarItemProps>) => {
           const active = child.props.isActive ? 'active' : null
@@ -71,8 +87,8 @@ const Navbar: NextPage = function (props) {
       <style jsx>{`
         .sticky {
           position: sticky;
-          top: 4rem;
           z-index: 10;
+          transition: top .2s linear;
         }
 
         .override-nav {
