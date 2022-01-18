@@ -7,23 +7,35 @@ const Header: NextPage = function () {
   const btnNames = ['light', 'bell', 'member']
 
   const wrapperDOM = useRef<HTMLElement>(null)
+  const preScrollY = useRef(0)
 
   useEffect(() => {
     function handleScroll() {
       const currentScrollY = window.scrollY
-      if (currentScrollY > 500) {
-        wrapperDOM.current!.style.top = '-64px'
-      } else {
-        wrapperDOM.current!.style.top = '0px'
+      const checkPoint = 550
+      const isScrollUp = preScrollY.current > currentScrollY
+
+      if (currentScrollY > checkPoint) {
+        if (isScrollUp) {
+          wrapperDOM.current!.style.top = '0'
+        } else {
+          wrapperDOM.current!.style.top = '-4rem'
+        }
       }
+
+      // 紀錄前一個 frame 的 scrollY
+      preScrollY.current = currentScrollY
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  }, [wrapperDOM])
 
   return (
-    <header className="sticky d-flex justify-content-between align-items-center px-3 bg-white" ref={wrapperDOM}>
+    <header
+      className="sticky d-flex justify-content-between align-items-center px-3 bg-white"
+      style={{ top: 0 }}
+      ref={wrapperDOM}>
       <Link href="/products">
         <a className="next-img-fix">
           <Image src="/images/kado-logo.svg" width="64" height="64" alt="logo" />
@@ -42,7 +54,7 @@ const Header: NextPage = function () {
         .sticky {
           position: sticky;
           z-index: 10;
-          transition: top .2s linear;
+          transition: top 0.2s linear;
         }
 
         .icon {

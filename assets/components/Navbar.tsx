@@ -45,15 +45,24 @@ const Navbar: NextPage = function (props) {
   }
 
   const wrapperDOM = useRef<HTMLElement>(null)
+  const preScrollY = useRef(0)
 
   useEffect(() => {
     function handleScroll() {
       const currentScrollY = window.scrollY
-      if (currentScrollY > 500) {
-        wrapperDOM.current!.style.top = '0'
-      } else {
-        wrapperDOM.current!.style.top = '4rem'
+      const checkPoint = 550
+      const isScrollUp = preScrollY.current > currentScrollY
+
+      if (currentScrollY > checkPoint) {
+        if (isScrollUp) {
+          wrapperDOM.current!.style.top = '4rem'
+        } else {
+          wrapperDOM.current!.style.top = '0'
+        }
       }
+
+      // 紀錄前一個 frame 的 scrollY
+      preScrollY.current = currentScrollY
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
@@ -88,7 +97,7 @@ const Navbar: NextPage = function (props) {
         .sticky {
           position: sticky;
           z-index: 10;
-          transition: top .2s linear;
+          transition: top 0.2s linear;
         }
 
         .override-nav {
