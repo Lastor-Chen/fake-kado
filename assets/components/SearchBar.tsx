@@ -1,5 +1,5 @@
-import { useRouter } from "next/router"
-import type { FormEvent, PropsWithChildren } from "react"
+import { useRouter } from 'next/router'
+import type { FormEvent, PropsWithChildren } from 'react'
 import { useState } from 'react'
 
 type SearchBarProps = {
@@ -7,7 +7,7 @@ type SearchBarProps = {
   keyword?: string
 }
 
-export default function SearchBar (props: PropsWithChildren<SearchBarProps>) {
+export default function SearchBar(props: PropsWithChildren<SearchBarProps>) {
   const currentKeyword = props.keyword || ''
   const [search, setSearch] = useState(currentKeyword)
   const router = useRouter()

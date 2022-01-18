@@ -47,6 +47,6 @@ export default function StickyScrollEffect(props: StickyHandlerProps) {
 
   return React.cloneElement(childElement, {
     ref: wrapperDOM,
-    style: { top: initTop, }
+    style: { top: initTop },
   })
 }

@@ -1,14 +1,14 @@
-import type { NextPage } from 'next'
 import Footer from './Footer'
 import Header from './Header'
 import Navbar, { NavBarItem } from './Navbar'
 import { When } from 'react-if'
+import { PropsWithChildren } from 'react'
 
 interface LayoutProps {
   hasNav?: boolean
 }
 
-const Layout: NextPage<LayoutProps> = function ({ children, hasNav }) {
+export default function Layout({ children, hasNav }: PropsWithChildren<LayoutProps>) {
   return (
     <div className="fix-footer-bottom lock-width">
       <Header />
@@ -45,5 +45,3 @@ const Layout: NextPage<LayoutProps> = function ({ children, hasNav }) {
     </div>
   )
 }
-
-export default Layout

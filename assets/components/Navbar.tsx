@@ -1,6 +1,6 @@
-import { NextPage } from 'next'
 import Link from 'next/link'
 import React, { isValidElement } from 'react'
+import type { PropsWithChildren } from 'react'
 import { If, Then, Else } from 'react-if'
 import type { UrlObject } from 'url'
 import StickyScrollEffect from '@components/StickyScrollEffect'
@@ -23,7 +23,7 @@ export function NavBarItem(props: {
 }
 
 /**
- * 需搭配 NavBarItem 使用
+ * 請搭配 NavBarItem 使用, 方便規範 props key
  * ```
  * <Navbar>
  *   <NavBarItem text="Active" href="/home" isActive isDisabled>
@@ -31,7 +31,7 @@ export function NavBarItem(props: {
  * </Navbar>
  * ```
  */
-const Navbar: NextPage = function (props) {
+export default function Navbar(props: PropsWithChildren<{}>) {
   const children = props.children
 
   // children 必須為 ReactElement | ReactElement[]
@@ -104,5 +104,3 @@ const Navbar: NextPage = function (props) {
     </StickyScrollEffect>
   )
 }
-
-export default Navbar

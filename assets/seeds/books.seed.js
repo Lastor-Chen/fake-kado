@@ -92,7 +92,6 @@ fs.writeFile(fullPath, json, 'utf8', () => {
   process.exit()
 })
 
-
 // Tool Function
 // ================
 

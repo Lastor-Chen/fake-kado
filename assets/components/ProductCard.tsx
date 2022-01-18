@@ -1,4 +1,4 @@
-import type { FC } from 'react'
+import type { PropsWithChildren } from 'react'
 import type { Book } from '@seeds/books'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -8,7 +8,7 @@ interface ProductCardProps {
   product: Book
 }
 
-const ProductCard: FC<ProductCardProps> = function ({ wrapperClass, product }) {
+export default function ProductCard({ wrapperClass, product }: PropsWithChildren<ProductCardProps>) {
   let defaultClass = 'd-flex row-cols-2'
   if (wrapperClass) {
     defaultClass += ` ${wrapperClass}`
@@ -22,7 +22,7 @@ const ProductCard: FC<ProductCardProps> = function ({ wrapperClass, product }) {
           </a>
         </Link>
       </div>
-      <div className="col ps-md-3 small color">
+      <div className="col ps-3 ps-sm-0 ps-md-3 small color">
         <Link href={`/product/${product.id}`}>
           <a className="fs-6 fw-bold text-reset text-decoration-none">{product.name}</a>
         </Link>
@@ -46,5 +46,3 @@ const ProductCard: FC<ProductCardProps> = function ({ wrapperClass, product }) {
     </div>
   )
 }
-
-export default ProductCard

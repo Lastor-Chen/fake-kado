@@ -1,9 +1,8 @@
-import type { NextPage } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import StickyScrollEffect from '@components/StickyScrollEffect'
 
-const Header: NextPage = function () {
+export default function Header() {
   const btnNames = ['light', 'bell', 'member']
 
   return (
@@ -57,5 +56,3 @@ const Header: NextPage = function () {
     </StickyScrollEffect>
   )
 }
-
-export default Header
