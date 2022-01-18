@@ -1,9 +1,19 @@
 import type { MouseEventHandler } from 'react'
 
-export default function SeeMoreBtn({ onClick }: { onClick: MouseEventHandler<HTMLButtonElement> }) {
+type SeeMoreBtnProps = {
+  onClick: MouseEventHandler<HTMLButtonElement>
+  disabled?: boolean
+  wrapperClass?: string
+}
+
+export default function SeeMoreBtn(props: SeeMoreBtnProps) {
+  let defaultClass = 'text-center'
+  if (props.wrapperClass) {
+    defaultClass += ` ${props.wrapperClass}`
+  }
   return (
-    <div className="mt-4 text-center">
-      <button className="more-btn primary-btn small fw-bold" onClick={onClick}>
+    <div className={defaultClass}>
+      <button className="more-btn primary-btn small fw-bold" onClick={props.onClick} disabled={props.disabled}>
         看更多
       </button>
 
@@ -15,6 +25,10 @@ export default function SeeMoreBtn({ onClick }: { onClick: MouseEventHandler<HTM
           border-radius: 50rem;
           border: none;
           background-color: transparent;
+
+          &:disabled {
+            opacity: 0.3;
+          }
         }
 
         .primary-btn {

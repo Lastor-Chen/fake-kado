@@ -9,7 +9,7 @@ import ProductCard from '@assets/components/ProductCard'
 import useSWR from 'swr'
 import { When } from 'react-if'
 import Spinner from '@assets/components/Spinner'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import SeeMoreBtn from '@components/SeeMoreBtn'
 
 /** 接收的 Query String 定義 */
@@ -59,7 +59,12 @@ export async function getServerSideProps(context: OverrideContext): Promise<GetS
 const Search: NextPage<SearchResult> = function (props) {
   const { keyword, books, totalPage, count } = props
   const [pageIdx, setPageIdx] = useState(1)
+  const [isLoading, setIsLoading] = useState(false)
   const isFinished = pageIdx >= totalPage
+  const onSeeMore = () => {
+    setPageIdx(pageIdx + 1)
+    setIsLoading(true)
+  }
 
   // SSR 拿到的第一批資料
   const firstBooks = books
@@ -67,7 +72,14 @@ const Search: NextPage<SearchResult> = function (props) {
   // Client 端處理第2頁開始的下拉分頁
   const pagesCSR: JSX.Element[] = []
   for (let idx = 2; idx <= pageIdx; idx++) {
-    pagesCSR.push(<Page pageIdx={idx} keyword={keyword} key={idx} />)
+    pagesCSR.push(
+      <Page
+        key={idx} //
+        pageIdx={idx}
+        keyword={keyword}
+        setIsLoading={setIsLoading}
+      />
+    )
   }
 
   return (
@@ -99,7 +111,7 @@ const Search: NextPage<SearchResult> = function (props) {
             {pagesCSR}
           </div>
           <When condition={!isFinished}>
-            <SeeMoreBtn onClick={() => setPageIdx(pageIdx + 1)} />
+            <SeeMoreBtn wrapperClass="mt-4" onClick={onSeeMore} disabled={isLoading} />
           </When>
         </section>
       </div>
@@ -126,13 +138,25 @@ export default Search
 // 拆分組件
 // =======================
 
+type PageProps = {
+  pageIdx: number;
+  keyword: string;
+  setIsLoading(isLoading: boolean): void
+}
+
 /** 分頁單位組件 */
-function Page(props: { pageIdx: number; keyword: string }) {
-  const { pageIdx, keyword } = props
+function Page(props: PageProps) {
+  const { pageIdx, keyword, setIsLoading } = props
   const { data, error } = useSWR([`/api/products`, LIMIT, pageIdx, keyword], fetchBooks)
   if (error) {
     handleAxiosError(error)
   }
+
+  useEffect(() => {
+    if (data) {
+      setIsLoading(false)
+    }
+  }, [data, setIsLoading])
 
   const books = data?.results || []
   const cards = books.map((book) => (
