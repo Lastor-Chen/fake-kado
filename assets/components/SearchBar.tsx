@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import type { FormEvent, PropsWithChildren } from 'react'
+import { FormEvent, PropsWithChildren, useRef } from 'react'
 import { useState } from 'react'
 
 type SearchBarProps = {
@@ -9,29 +9,31 @@ type SearchBarProps = {
 
 export default function SearchBar(props: PropsWithChildren<SearchBarProps>) {
   const currentKeyword = props.keyword || ''
-  const [search, setSearch] = useState(currentKeyword)
+  const [keyword, setKeyword] = useState(currentKeyword)
   const router = useRouter()
 
   const onSearch = (e: FormEvent) => {
     e.preventDefault()
-    const query = search.trim()
+    const query = keyword.trim()
     router.push({
       pathname: '/search',
       query: { q: query },
     })
   }
 
+  const hideCancelBtn = keyword ? '' : 'invisible'
   return (
     <section className={props.wrapperClass}>
       <form action="/products" onSubmit={onSearch}>
         <div className="search-group">
-          <span className="search-btn"></span>
+          <span className="my-btn search-btn" onClick={onSearch}></span>
           <input
             type="text"
             placeholder="請輸入想搜尋的作品名、分類"
-            value={search}
-            onChange={(e) => setSearch(e.currentTarget.value)}
+            value={keyword}
+            onChange={(e) => setKeyword(e.currentTarget.value)}
           />
+          <span className={`my-btn cancel-btn ${hideCancelBtn}`} onClick={() => setKeyword('')}></span>
         </div>
       </form>
 
@@ -62,18 +64,25 @@ export default function SearchBar(props: PropsWithChildren<SearchBarProps>) {
           }
         }
 
-        .search-btn {
+        .my-btn {
           position: absolute;
           top: 50%;
-          left: 0.75rem;
           transform: translateY(-50%);
           width: 1.5rem;
           height: 1.5rem;
-          mask-position: center;
-          mask-repeat: no-repeat;
-          mask: url('/images/search-icon.svg');
-          background-color: var(--theme-ui-colors-primary);
           cursor: pointer;
+
+          &.search-btn {
+            left: 0.75rem;
+            mask: url('/images/search-icon.svg') center no-repeat;
+            background-color: var(--theme-ui-colors-primary);
+          }
+
+          &.cancel-btn {
+            right: 0.75rem;
+            mask: url('/images/x-cancel.svg') center no-repeat;
+            background-color: var(--theme-ui-colors-gray-5);
+          }
         }
       `}</style>
     </section>
