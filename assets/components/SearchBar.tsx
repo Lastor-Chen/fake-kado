@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { FormEvent, PropsWithChildren, useRef } from 'react'
+import { FormEvent, PropsWithChildren, useEffect, useRef } from 'react'
 import { useState } from 'react'
 
 type SearchBarProps = {
@@ -12,8 +12,17 @@ export default function SearchBar(props: PropsWithChildren<SearchBarProps>) {
   const [keyword, setKeyword] = useState(currentKeyword)
   const router = useRouter()
 
+  // 防止同一關鍵字連續 query
+  const isSearching = useRef(false)
+  useEffect(() => {
+    isSearching.current = false
+  }, [keyword])
+
   const onSearch = (e: FormEvent) => {
     e.preventDefault()
+    if (isSearching.current) return void 0
+    isSearching.current = true
+
     const query = keyword.trim()
     router.push({
       pathname: '/search',
