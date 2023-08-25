@@ -3,21 +3,34 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import ProductCard from '@components/ProductCard'
 import type { ProductsResponse } from '@pages/api/products'
-import { handleAxiosError, fetchBooks } from '@utils/tool'
+import { handleAxiosError, fetchBooks, fetchBooks2 } from '@utils/tool'
 import { Unless, When } from 'react-if'
 import CategoryBar from '@components/CategoryBar'
 import SearchBar from '@components/SearchBar'
 import Spinner from '@assets/components/Spinner'
 import useSWRInfinite from 'swr/infinite'
+import { useInfiniteQuery } from '@tanstack/react-query'
 import SeeMoreBtn from '@assets/components/SeeMoreBtn'
 
 const LIMIT = 10 // 設定單頁筆數
 
 // SSG without data + CSR Page
 const Products: NextPage = function () {
+  const { data: data2 } = useInfiniteQuery({
+    queryKey: ['fetchBooks'],
+    queryFn: fetchBooks2,
+    getNextPageParam: (lastPage, pages) => {
+      return lastPage.page ? lastPage.page + 1 : lastPage.page
+    },
+  })
+
   const { data, size, setSize, error } = useSWRInfinite(getKey, fetchBooks)
   if (error) {
     handleAxiosError(error)
+  }
+
+  const getNextPage = () => {
+    setSize(size + 1)
   }
 
   // Memo:
@@ -60,7 +73,7 @@ const Products: NextPage = function () {
             <Spinner wrapperClass="w-100 py-4" />
           </When>
           <Unless condition={isFinished || isFirstLoading}>
-            <SeeMoreBtn wrapperClass="mt-4" onClick={() => setSize(size + 1)} disabled={isLoading} />
+            <SeeMoreBtn wrapperClass="mt-4" onClick={() => getNextPage()} disabled={isLoading} />
           </Unless>
         </section>
       </div>

@@ -2,6 +2,17 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import '@styles/global.css'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
+import { Hydrate, QueryClientProvider, QueryClient } from '@tanstack/react-query'
+
+// tanstack query global setting
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 0,
+    },
+  },
+})
 
 function App({ Component, pageProps }: AppProps) {
   return (
@@ -15,7 +26,11 @@ function App({ Component, pageProps }: AppProps) {
         <link rel="icon" href="/favicon.ico" />
         <title>Fake-Kado</title>
       </Head>
-      <Component {...pageProps} />
+      <QueryClientProvider client={queryClient}>
+        <Hydrate state={pageProps.dehydratedState}>
+          <Component {...pageProps} />
+        </Hydrate>
+      </QueryClientProvider>
     </>
   )
 }

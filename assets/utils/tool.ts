@@ -23,6 +23,7 @@ export function getAPIBaseURL() {
 }
 
 export async function fetchBooks(url: string, limit: number, pageIdx: number, keyword?: string, baseURL?: string) {
+  console.log({ keyword, limit, pageIdx })
   const params: ProductsQueryString = {
     q: keyword,
     order: 'DESC',
@@ -32,4 +33,21 @@ export async function fetchBooks(url: string, limit: number, pageIdx: number, ke
   const { data } = await axios.get<ProductsResponse>(url, { params, baseURL })
   if (data.status !== 'ok') throw new Error('Server Error')
   return data
+}
+
+
+
+export async function fetchBooks2(params) {
+  console.log('params', params)
+  const response = await axios.get<ProductsResponse>('/api/products', {
+    params: {
+      q: '',
+      order: 'DESC',
+      limit: 10,
+      page: 1,
+    }
+  })
+  console.log('response', response)
+
+  return response.data
 }
